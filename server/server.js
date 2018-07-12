@@ -6,6 +6,9 @@ const PORT = 5000;
 
 app.use(express.static('server/public'));
 
+io.on('connection',client => {
+  console.log(`Client id ${client.id} connected.`);
+})
 
 
 http.listen(PORT, err => {
