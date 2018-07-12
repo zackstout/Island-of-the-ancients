@@ -1,21 +1,38 @@
 
-let height, width, ctx;
+let height, width, ctx, grid;
 import { Grid } from './Grid.js';
 
 
 let test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
 let test_edges = [[{x:1, y:2}, {x:2,y:2}], [{x:1, y:3}, {x:1, y:4}]];
 
+
 window.onload = function() {
   height = 500;
   width = 500;
-  ctx = document.getElementById('island').getContext('2d');
+  const canvas = document.getElementById('island');
+  ctx = canvas.getContext('2d');
 
-  let grid = new Grid(height, width, 12, 12);
+  grid = new Grid(height, width, 12, 12);
   console.log(grid);
 
   drawGrid(grid, test_vertices, test_edges);
+
+  // Determine which cell was clicked on:
+  canvas.addEventListener("click", handleClick);
 };
+
+
+function handleClick(e) {
+  // NOTE: Will only work when canvas butts up against edge of browser:
+  let mouse = {x: e.clientX, y: e.clientY};
+
+  let cell_x = Math.floor(mouse.x / grid.cell_width);
+  let cell_y = Math.floor(mouse.y / grid.cell_height);
+
+  console.log(grid.findCell(cell_x, cell_y));
+  return grid.findCell(cell_x, cell_y);
+}
 
 
 function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
@@ -46,6 +63,7 @@ function drawVertices(verts, grid) {
   });
 }
 
+
 function drawEdges(edges, grid) {
   edges.forEach(edge => {
     let start_x = edge[0].x * grid.cell_width;
@@ -64,6 +82,8 @@ function drawEdges(edges, grid) {
   });
 }
 
+
+// Get the 1 or 2 cells that border a given edge:
 function getNeighborsOfEdge(edge, grid) {
   let res = [];
 
@@ -77,7 +97,8 @@ function getNeighborsOfEdge(edge, grid) {
       let cell2 = grid.findCell(edge[0].x, edge[0].y);
       res.push(cell2);
     }
-  // Horizontal edge:
+
+    // Horizontal edge:
   } else if (edge[0].y == edge[1].y) {
     if (edge[0].y != 0) {
       let cell3 = grid.findCell(edge[0].x, edge[0].y - 1);

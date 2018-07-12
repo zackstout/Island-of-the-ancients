@@ -25,6 +25,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     this.cells = cells;
   };
 
+  // Grab the cell from the grid array at a given xy-position:
   this.findCell = function(x, y) {
     return this.cells[x * this.numCellsW + y];
   };
