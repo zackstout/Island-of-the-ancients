@@ -1,6 +1,8 @@
 
 const resources = ["stone", "iron"];
 
+import { Cell } from './Cell.js';
+
 export function Grid(h, w, numCellsH, numCellsW) {
 
   this.numCellsH = numCellsH;
@@ -9,21 +11,20 @@ export function Grid(h, w, numCellsH, numCellsW) {
   this.cell_height = h / numCellsH;
   this.cell_width = w / numCellsW;
 
-  this.generateSquares = function() {
-    let squares = [];
+  this.generateCells = function() {
+    let cells = [];
     for (let i=0; i < this.numCellsW; i++) {
       for (let j=0; j < this.numCellsH; j++) {
         let resource = Math.random() > 0.5 ? resources[0] : resources[1];
-        let square = {x: i, y: j, resource: resource};
+        let cell = new Cell(i, j, resource);
+        cell.vertices = cell.computeVertices(); // Not sure this is needed
 
-        squares.push(square);
+        cells.push(cell);
       }
     }
-    this.squares = squares;
+    this.cells = cells;
     // return squares;
   };
 
-  this.generateSquares();
+  this.generateCells();
 }
-
-// module.exports = Grid;
