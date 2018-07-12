@@ -23,7 +23,10 @@ export function Grid(h, w, numCellsH, numCellsW) {
       }
     }
     this.cells = cells;
-    // return squares;
+  };
+
+  this.findCell = function(x, y) {
+    return this.cells[x * this.numCellsW + y];
   };
 
   this.generateCells();

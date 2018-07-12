@@ -6,6 +6,7 @@ export function Cell(x, y, resource) {
   this.vertices = [];
   this.edges = [];
 
+  // These need an occupant slot. Or maybe we don't need this at all.
   this.computeVertices = function() {
     const UL = {x: this.x    , y: this.y    };
     const UR = {x: this.x + 1, y: this.y    };
