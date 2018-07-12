@@ -6,8 +6,10 @@ const PORT = 5000;
 
 app.use(express.static('server/public'));
 
-io.on('connection',client => {
-  console.log(`Client id ${client.id} connected.`);
+io.on('connection',socket => {
+  console.log(`Client id ${socket.id} connected.`);
+  socket.emit('newConnection',{message:`Welcome, ${socket.id}!`});
+  socket.on('mousemove',data => console.log(data));
 })
 
 
