@@ -2,6 +2,8 @@
 const resources = ["stone", "iron", "gem"];
 
 import { Cell } from './Cell.js';
+import { edgeInArray } from './Test.js';
+import { vertexInArray } from './Test.js';
 
 import { getDistance } from './Vertex.js';
 
@@ -12,6 +14,8 @@ export function Grid(h, w, numCellsH, numCellsW) {
   this.cell_width = w / numCellsW;
 
   this.cells = [];
+
+  // ===============================================================================================
 
   this.generateCells = function() {
     for (let i=0; i < this.numCellsW; i++) {
@@ -35,6 +39,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     }
   };
 
+  // ===============================================================================================
 
   this.getClickedCell = function(point) {
     const cell_x = Math.floor(point.x / this.cell_width);
@@ -43,6 +48,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     return cell;
   };
 
+  // ===============================================================================================
 
   this.getNearestVertex = function (point) {
     const cell = this.getClickedCell(point);
@@ -67,6 +73,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     return closestVertex;
   };
 
+  // ===============================================================================================
 
   this.getNearestEdge = function(point) {
     const cell = this.getClickedCell(point);
@@ -93,6 +100,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     return closestEdge;
   };
 
+  // ===============================================================================================
 
   // NOTE: this is wrong for the literal edge cases, i think:
   // Get the 1 or 2 cells that border a given edge:
@@ -121,11 +129,61 @@ export function Grid(h, w, numCellsH, numCellsW) {
     return res;
   };
 
+  // ===============================================================================================
+
+  this.getOccupiedEdgesEachCell = function(occupied_edges) {
+    this.cells.forEach(cell => {
+      cell.numOccEdges = 0;
+      cell.edges.forEach(edge => {
+        if (edgeInArray(edge, occupied_edges)) cell.numOccEdges ++;
+      });
+    });
+  };
+
+  // ===============================================================================================
+
+  this.getEachCellOwner = function(occupied_vertices) {
+    this.cells.forEach(cell => {
+      cell.numPlay1 = 0;
+      cell.numPlay2 = 0;
+
+      for (let i=0; i < cell.vertices.length; i++) {
+        const vtx = cell.vertices[i];
+        // Not using vertexInArray because it doesn't return position or player.
+        for (let j=0; j < occupied_vertices.length; j++) {
+          const occ = occupied_vertices[j];
+          // We have a match:
+          if (vtx.x == occ.x && vtx.y == occ.y) {
+            if (occ.occupant == 'P1') {
+              cell.numPlay1 ++;
+            } else if (occ.occupant == 'P2') {
+              cell.numPlay2 ++;
+            }
+          }
+        }
+      }
+
+      if (cell.numPlay1 > cell.numPlay2) {
+        cell.owner = 'P1';
+      } else if (cell.numPlay2 > cell.numPlay1) {
+        cell.owner = 'P2';
+      } else if (cell.numPlay1 == 0 && cell.numPlay2 == 0) {
+        cell.owner = null;
+      } else {
+        cell.owner = 'Neutral';
+      }
+
+    });
+  };
+
+  // ===============================================================================================
 
   // Grab the cell from the grid array at a given xy-position:
   this.findCell = function(x, y) {
     return this.cells[x * this.numCellsW + y];
   };
+
+  // ===============================================================================================
 
   this.generateCells();
 }

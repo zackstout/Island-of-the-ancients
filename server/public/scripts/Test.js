@@ -12,6 +12,8 @@ export function generateTestVertices(num) {
   return res;
 }
 
+// ===============================================================================================
+
 export function generateTestEdges(num) {
   let res = [];
   while (res.length < num) {
@@ -41,16 +43,19 @@ export function generateTestEdges(num) {
   return res;
 }
 
+// ===============================================================================================
 
-function vertexInArray(v, arr) {
+export function vertexInArray(v, arr) {
   for (let i=0; i < arr.length; i++) {
     if (arr[i].x == v.x && arr[i].y == v.y) return true;
   }
   return false;
 }
 
+// ===============================================================================================
+
 // Note: this depends on convention (LRUD) being followed. Otherwise we may overlap.
-function edgeInArray(e, arr) {
+export function edgeInArray(e, arr) {
   for (let i=0; i < arr.length; i++) {
     if (arr[i][0].x == e[0].x && arr[i][0].y == e[0].y && arr[i][1].x == e[1].x && arr[i][1].y == e[1].y) return true;
   }

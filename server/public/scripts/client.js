@@ -6,12 +6,14 @@ import { drawGrid } from './Drawing.js';
 import { generateTestEdges } from './Test.js';
 import { generateTestVertices } from './Test.js';
 
-// const test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
-// const test_edges = [[{x:1, y:2}, {x:2, y:2}], [{x:1, y:3}, {x:1, y:4}]];
-
 const test_edges = generateTestEdges(20);
 const test_vertices = generateTestVertices(15);
 
+// make the variables globally available (to all modules):
+window.test_edges = test_edges;
+window.test_vertices = test_vertices;
+
+// ===============================================================================================
 
 window.onload = function() {
   height = 500;
@@ -28,6 +30,7 @@ window.onload = function() {
   canvas.addEventListener("click", handleClick);
 };
 
+// ===============================================================================================
 
 function handleClick(e) {
   // NOTE: Will only work when canvas butts up against edge of browser, i.e. body has margin 0:
@@ -38,6 +41,7 @@ function handleClick(e) {
   grid.getNearestEdge(mouse);
 }
 
+// ===============================================================================================
 
 
 

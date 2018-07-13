@@ -15,15 +15,16 @@ export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   });
 
   // Pretty ugly to pass around grid like this...
-  drawVertices(occupied_vertices, grid);
-  drawEdges(occupied_edges, grid);
-
-  console.log(grid.findCell(1, 2));
+  drawOccupiedEdges(occupied_edges, grid);
+  drawOccupiedVertices(occupied_vertices, grid);
+  drawNumOccupiedEdgesPerCell(grid);
+  // console.log(grid.findCell(1, 2));
 }
 
+// ===============================================================================================
 
 // Each vertex has x, y, and occupant:
-function drawVertices(verts, grid) {
+function drawOccupiedVertices(verts, grid) {
   verts.forEach(vertex => {
     ctx.fillStyle = vertex.occupant === 'P1' ? 'red' : 'blue';
     ctx.beginPath();
@@ -32,9 +33,10 @@ function drawVertices(verts, grid) {
   });
 }
 
+// ===============================================================================================
 
 // Each edge is an array of two vertex objects:
-function drawEdges(edges, grid) {
+function drawOccupiedEdges(edges, grid) {
   edges.forEach(edge => {
     const start_x = edge[0].x * grid.cell_width;
     const start_y = edge[0].y * grid.cell_height;
@@ -48,6 +50,29 @@ function drawEdges(edges, grid) {
     ctx.stroke();
 
     const neighbors = grid.getNeighborsOfEdge(edge);
-    console.log(neighbors);
+    // console.log(neighbors);
   });
 }
+
+// ===============================================================================================
+
+function drawNumOccupiedEdgesPerCell(grid) {
+  grid.getOccupiedEdgesEachCell(window.test_edges);
+  grid.getEachCellOwner(window.test_vertices);
+
+  grid.cells.forEach(cell => {
+    const text_x = cell.x * grid.cell_width + grid.cell_width/2;
+    const text_y = cell.y * grid.cell_height + grid.cell_height/2;
+    ctx.font = "20px";
+    if (cell.owner == 'P1') {
+      ctx.fillStyle = 'red';
+    } else if (cell.owner == 'P2') {
+      ctx.fillStyle = 'blue';
+    } else {
+      ctx.fillStyle = 'black';
+    }
+    ctx.fillText(cell.numOccEdges, text_x, text_y);
+  });
+}
+
+// ===============================================================================================
