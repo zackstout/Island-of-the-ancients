@@ -21,13 +21,13 @@ export function Cell(x, y, resource) {
 
   // Is it going to become important to have a convention for ordering vertices in an edge? Always L to R and U to D? That would be arduous, should automate it.
   this.computeEdges = function() {
-    const top = [this.vertices[0], this.vertices[1]];
-    const right = [this.vertices[1], this.vertices[3]];
+    const top    = [this.vertices[0], this.vertices[1]];
+    const right  = [this.vertices[1], this.vertices[3]];
     const bottom = [this.vertices[2], this.vertices[3]];
-    const left = [this.vertices[0], this.vertices[2]];
-    this.edges = [top, right, bottom, left];
+    const left   = [this.vertices[0], this.vertices[2]];
+    this.edges   = [top, right, bottom, left];
   };
-  
+
   // ===============================================================================================
 
   this.computeVertices();

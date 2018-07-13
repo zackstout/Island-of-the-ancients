@@ -131,7 +131,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.getOccupiedEdgesEachCell = function(occupied_edges) {
+  this.getOccupiedEdgesOfEachCell = function(occupied_edges) {
     this.cells.forEach(cell => {
       cell.numOccEdges = 0;
       cell.edges.forEach(edge => {
@@ -142,7 +142,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.getEachCellOwner = function(occupied_vertices) {
+  this.getEachCellsOwner = function(occupied_vertices) {
     this.cells.forEach(cell => {
       cell.numPlay1 = 0;
       cell.numPlay2 = 0;
@@ -174,6 +174,34 @@ export function Grid(h, w, numCellsH, numCellsW) {
       }
 
     });
+  };
+
+  // ===============================================================================================
+
+  this.getNextHarvest = function() {
+    this.nextHarvest = {
+      player1: {
+        "iron": 0,
+        "stone": 0,
+        "gem": 0
+      },
+      player2: {
+        "iron": 0,
+        "stone": 0,
+        "gem": 0
+      }
+    };
+
+    this.cells.forEach(cell => {
+      if (cell.owner == 'P1') {
+        this.nextHarvest.player1[cell.resource] += cell.numOccEdges;
+      }
+      if (cell.owner == 'P2') {
+        this.nextHarvest.player2[cell.resource] += cell.numOccEdges;
+      }
+    });
+
+    console.log(this.nextHarvest);
   };
 
   // ===============================================================================================

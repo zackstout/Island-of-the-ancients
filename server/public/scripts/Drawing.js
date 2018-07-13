@@ -17,7 +17,8 @@ export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   // Pretty ugly to pass around grid like this...
   drawOccupiedEdges(occupied_edges, grid);
   drawOccupiedVertices(occupied_vertices, grid);
-  drawNumOccupiedEdgesPerCell(grid);
+  drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
+
   // console.log(grid.findCell(1, 2));
 }
 
@@ -57,13 +58,16 @@ function drawOccupiedEdges(edges, grid) {
 // ===============================================================================================
 
 function drawNumOccupiedEdgesPerCell(grid) {
-  grid.getOccupiedEdgesEachCell(window.test_edges);
-  grid.getEachCellOwner(window.test_vertices);
+  grid.getOccupiedEdgesOfEachCell(window.test_edges);
+  grid.getEachCellsOwner(window.test_vertices);
+  grid.getNextHarvest();
 
   grid.cells.forEach(cell => {
     const text_x = cell.x * grid.cell_width + grid.cell_width/2;
     const text_y = cell.y * grid.cell_height + grid.cell_height/2;
-    ctx.font = "20px";
+
+    // console.log(cell.resource);
+
     if (cell.owner == 'P1') {
       ctx.fillStyle = 'red';
     } else if (cell.owner == 'P2') {
@@ -71,6 +75,7 @@ function drawNumOccupiedEdgesPerCell(grid) {
     } else {
       ctx.fillStyle = 'black';
     }
+
     ctx.fillText(cell.numOccEdges, text_x, text_y);
   });
 }
