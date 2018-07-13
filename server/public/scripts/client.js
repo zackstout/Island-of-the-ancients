@@ -3,9 +3,14 @@
 let height, width, ctx, grid;
 import { Grid } from './Grid.js';
 import { drawGrid } from './Drawing.js';
+import { generateTestEdges } from './Test.js';
+import { generateTestVertices } from './Test.js';
 
-const test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
-const test_edges = [[{x:1, y:2}, {x:2, y:2}], [{x:1, y:3}, {x:1, y:4}]];
+// const test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
+// const test_edges = [[{x:1, y:2}, {x:2, y:2}], [{x:1, y:3}, {x:1, y:4}]];
+
+const test_edges = generateTestEdges(20);
+const test_vertices = generateTestVertices(15);
 
 
 window.onload = function() {
