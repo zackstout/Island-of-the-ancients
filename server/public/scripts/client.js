@@ -3,9 +3,8 @@
 let height, width, ctx, grid;
 import { Grid } from './Grid.js';
 
-
-let test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
-let test_edges = [[{x:1, y:2}, {x:2, y:2}], [{x:1, y:3}, {x:1, y:4}]];
+const test_vertices = [{x: 10, y: 3, occupant: 'P1'}, {x: 2, y: 4, occupant: 'P1'}, {x: 3, y:3, occupant: 'P2'}, {x: 2, y: 1, occupant: 'P1'}];
+const test_edges = [[{x:1, y:2}, {x:2, y:2}], [{x:1, y:3}, {x:1, y:4}]];
 
 
 window.onload = function() {
@@ -19,48 +18,28 @@ window.onload = function() {
 
   drawGrid(grid, test_vertices, test_edges);
 
-  // Determine which cell was clicked on:
+  // Determine which cell was clicked on, find nearest vertex:
   canvas.addEventListener("click", handleClick);
 };
 
-function getDistance(a, b) {
-  return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5);
-}
 
 function handleClick(e) {
-  // NOTE: Will only work when canvas butts up against edge of browser:
-  let mouse = {x: e.clientX, y: e.clientY};
-
-  let cell_x = Math.floor(mouse.x / grid.cell_width);
-  let cell_y = Math.floor(mouse.y / grid.cell_height);
-
-  let cell = grid.findCell(cell_x, cell_y);
-
-
-  // Get nearest vertex to clicked point:
-  let vertices = cell.computeVertices().map(v => {
-    let res = {x: v.x * grid.cell_width, y: v.y * grid.cell_height};
-    return res;
-  });
-
-  let minDist = 1000;
-  let closestVertex = {};
-
-  vertices.forEach(v => {
-    let d = getDistance(mouse, v);
-    if (d < minDist) {
-      minDist = d;
-      closestVertex.x = Math.round(v.x / grid.cell_width);
-      closestVertex.y = Math.round(v.y / grid.cell_height);
-    }
-  });
-
-  console.log(cell, closestVertex);
+  // NOTE: Will only work when canvas butts up against edge of browser, i.e. body has margin 0:
+  const mouse = {x: e.clientX, y: e.clientY};
+  const cell = grid.getClickedCell(mouse);
+  grid.getNearestVertex(mouse);
+  grid.getNearestEdge(mouse);
+}
 
 
-
+function getClickedCell(point, grid) {
+  const cell_x = Math.floor(point.x / grid.cell_width);
+  const cell_y = Math.floor(point.y / grid.cell_height);
+  const cell = grid.findCell(cell_x, cell_y);
   return cell;
 }
+
+
 
 // I want to put these inside the Grid constructor -- but can ctx be easily accessed from there?
 function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
@@ -75,7 +54,7 @@ function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
     ctx.fillRect(cell.x * grid.cell_width, cell.y * grid.cell_height, grid.cell_width, grid.cell_height);
   });
 
-  // Pretty ugly to pass around grid like this.
+  // Pretty ugly to pass around grid like this...
   drawVertices(occupied_vertices, grid);
   drawEdges(occupied_edges, grid);
 
@@ -83,6 +62,7 @@ function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
 }
 
 
+// Each vertex has x, y, and occupant:
 function drawVertices(verts, grid) {
   verts.forEach(vertex => {
     ctx.fillStyle = vertex.occupant === 'P1' ? 'red' : 'blue';
@@ -93,12 +73,13 @@ function drawVertices(verts, grid) {
 }
 
 
+// Each edge is an array of two vertex objects:
 function drawEdges(edges, grid) {
   edges.forEach(edge => {
-    let start_x = edge[0].x * grid.cell_width;
-    let start_y = edge[0].y * grid.cell_height;
-    let end_x = edge[1].x * grid.cell_width;
-    let end_y = edge[1].y * grid.cell_height;
+    const start_x = edge[0].x * grid.cell_width;
+    const start_y = edge[0].y * grid.cell_height;
+    const end_x = edge[1].x * grid.cell_width;
+    const end_y = edge[1].y * grid.cell_height;
 
     ctx.beginPath();
     ctx.moveTo(start_x, start_y);
@@ -106,12 +87,14 @@ function drawEdges(edges, grid) {
     ctx.lineWidth = 5;
     ctx.stroke();
 
-    let neighbors = getNeighborsOfEdge(edge, grid);
+    const neighbors = getNeighborsOfEdge(edge, grid);
     console.log(neighbors);
   });
 }
 
 
+
+// NOTE: this is wrong for the literal edge cases:
 // Get the 1 or 2 cells that border a given edge:
 function getNeighborsOfEdge(edge, grid) {
   let res = [];
@@ -119,25 +102,45 @@ function getNeighborsOfEdge(edge, grid) {
   // Vertical edge:
   if (edge[0].x == edge[1].x) { // edge[0] is starting vertex, edge[1] is ending vertex.
     if (edge[0].x != 0) {
-      let cell1 = grid.findCell(edge[0].x - 1, edge[0].y);
-      res.push(cell1);
+      res.push(grid.findCell(edge[0].x - 1, edge[0].y));
     }
     if (edge[1].x != grid.numCellsW - 1) {
-      let cell2 = grid.findCell(edge[0].x, edge[0].y);
-      res.push(cell2);
+      res.push(grid.findCell(edge[0].x + 1, edge[0].y));
     }
 
     // Horizontal edge:
   } else if (edge[0].y == edge[1].y) {
     if (edge[0].y != 0) {
-      let cell3 = grid.findCell(edge[0].x, edge[0].y - 1);
-      res.push(cell3);
+      res.push(grid.findCell(edge[0].x, edge[0].y - 1));
     }
     if (edge[1].y != grid.numCellsH - 1) {
-      let cell4 = grid.findCell(edge[0].x, edge[0].y);
-      res.push(cell4);
+      res.push(grid.findCell(edge[0].x, edge[0].y + 1));
     }
   }
 
   return res;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// This file will never end!
