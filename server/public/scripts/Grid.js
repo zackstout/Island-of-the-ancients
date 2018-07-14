@@ -54,7 +54,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
   this.detectBoardFeature = function(point) {
     const cell = this.getClickedCell(point);
     const edgeDistances = this.distanceToEdges(cell,point);
-    return this.selectedFeature(edgeDistances);
+    return this.selectedFeature(cell, edgeDistances);
   };
 
   // ===============================================================================================
@@ -75,7 +75,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.selectedFeature = function(edgeDistances) {
+  this.selectedFeature = function(cell, edgeDistances) {
 
     /*
     return {
