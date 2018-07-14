@@ -51,6 +51,33 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
+  this.detectBoardFeature = function(point) {
+    const cell = this.getClickedCell(point);
+    const edgeDistances = this.distanceToEdges(cell,point);
+    return this.selectedFeature(edgeDistances);
+  }
+
+  // ===============================================================================================
+
+  this.distanceToEdges = function(cell,point){
+
+    //return [distanceToTop,distanceToRight,distanceToBottom,distanceToLeft]
+  }
+
+  // ===============================================================================================
+
+  this.selectedFeature = function(edgeDistances) {
+
+    /*
+    return {
+      feature: "vertex" / "edge" / "cell"
+      location: {x,y} / [{x,y},{x,y}] / {x,y}
+    }
+    */
+  }
+
+  // ===============================================================================================
+
   this.getNearestVertex = function (point) {
     const cell = this.getClickedCell(point);
 
