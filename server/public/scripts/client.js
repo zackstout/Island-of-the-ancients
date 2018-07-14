@@ -34,12 +34,11 @@ window.onload = function() {
 // ===============================================================================================
 
 function handleClick(e) {
-  // NOTE: Will only work when canvas butts up against edge of browser, i.e. body has margin 0:
-  // maybe we need e.screenX instead.
   const mouse = {x: e.offsetX, y: e.offsetY};
   const cell = grid.getClickedCell(mouse);
   grid.getNearestVertex(mouse);
   grid.getNearestEdge(mouse);
+  grid.distanceToEdges(cell, mouse);
 }
 
 // ===============================================================================================

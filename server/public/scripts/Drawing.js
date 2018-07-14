@@ -1,5 +1,7 @@
 
 
+// should be a method of the grid:
+
 export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   let ctx = window.ctx;
 
@@ -18,8 +20,6 @@ export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   drawOccupiedEdges(occupied_edges, grid);
   drawOccupiedVertices(occupied_vertices, grid);
   drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
-
-  // console.log(grid.findCell(1, 2));
 }
 
 // ===============================================================================================

@@ -55,14 +55,23 @@ export function Grid(h, w, numCellsH, numCellsW) {
     const cell = this.getClickedCell(point);
     const edgeDistances = this.distanceToEdges(cell,point);
     return this.selectedFeature(edgeDistances);
-  }
+  };
 
   // ===============================================================================================
 
-  this.distanceToEdges = function(cell,point){
+  this.distanceToEdges = function(cell, point) {
+      const w = this.cell_width;
+      const h = this.cell_height;
 
-    //return [distanceToTop,distanceToRight,distanceToBottom,distanceToLeft]
-  }
+      // Top, Right, Bottom, Left:
+      const top_distance    = point.y - cell.edges[0][0].y * h;
+      const right_distance  = cell.edges[1][0].x * w - point.x;
+      const bottom_distance = cell.edges[2][0].y * h - point.y;
+      const left_distance   = point.x - cell.edges[3][0].x * w;
+
+      // console.log([top_distance, right_distance, bottom_distance, left_distance]);
+      return [top_distance, right_distance, bottom_distance, left_distance];
+  };
 
   // ===============================================================================================
 
@@ -74,7 +83,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
       location: {x,y} / [{x,y},{x,y}] / {x,y}
     }
     */
-  }
+  };
 
   // ===============================================================================================
 
