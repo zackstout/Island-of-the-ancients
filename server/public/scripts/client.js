@@ -12,7 +12,7 @@ const test_vertices = generateTestVertices(30);
 // make the variables globally available (to all modules):
 window.test_edges = test_edges;
 window.test_vertices = test_vertices;
-
+console.log({test_edges},{test_vertices});
 // ===============================================================================================
 
 window.onload = function() {
