@@ -14,4 +14,4 @@ http.listen(PORT, err => {
   } else {
     console.log(`Listening on port ${PORT}...`);
   }
-})
+});

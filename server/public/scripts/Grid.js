@@ -7,6 +7,7 @@ import { vertexInArray } from './Test.js';
 
 import { getDistance } from './Vertex.js';
 
+
 export function Grid(h, w, numCellsH, numCellsW) {
   this.numCellsH = numCellsH;
   this.numCellsW = numCellsW;
@@ -102,7 +103,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  // NOTE: this is wrong for the literal edge cases, i think:
+  // NOTE: this is wrong for the literal edge cases, i think...:
   // Get the 1 or 2 cells that border a given edge:
   this.getNeighborsOfEdge = function(edge) {
     let res = [];
@@ -135,7 +136,9 @@ export function Grid(h, w, numCellsH, numCellsW) {
     this.cells.forEach(cell => {
       cell.numOccEdges = 0;
       cell.edges.forEach(edge => {
-        if (edgeInArray(edge, occupied_edges)) cell.numOccEdges ++;
+        if (edgeInArray(edge, occupied_edges)) {
+          cell.numOccEdges ++;
+        }
       });
     });
   };
@@ -163,6 +166,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
         }
       }
 
+      // Determine the owner:
       if (cell.numPlay1 > cell.numPlay2) {
         cell.owner = 'P1';
       } else if (cell.numPlay2 > cell.numPlay1) {
@@ -177,6 +181,8 @@ export function Grid(h, w, numCellsH, numCellsW) {
   };
 
   // ===============================================================================================
+
+  // NOTE: there is a bug here. If two sentries border a field that grows one, player's count will go up by 2.
 
   this.getNextHarvest = function() {
     this.nextHarvest = {
@@ -202,6 +208,22 @@ export function Grid(h, w, numCellsH, numCellsW) {
     });
 
     console.log(this.nextHarvest);
+  };
+
+  // ===============================================================================================
+
+  // Check whether two vertices are connected by a path of rods for a given configuration of rods:
+  this.areConnectedVertices = function(v1, v2, occupant_edges) {
+    // Let's use the fact that each of our edges has orientation either LR or UD.... Or perhaps not:
+    // Start at one vertex. Check for rods; if find one, follow it.
+    // Hmm. It would be faster to look through the edges of a vertex... No it wouldn't!
+
+    // Loop through all occupant_edges. See if any contain vertex. If they do, run again with new vertex.
+    // ISSUE: can't count the edge you just walked through -- otherwise you just walk back and forth!
+
+    // It's starting to feel like we'll need recursive backtracking...But maybe there's a simpler way.
+
+
   };
 
   // ===============================================================================================

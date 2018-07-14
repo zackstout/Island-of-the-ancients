@@ -15,6 +15,7 @@ export function Cell(x, y, resource) {
     const LL = {x: this.x    , y: this.y + 1};
     const LR = {x: this.x + 1, y: this.y + 1};
     this.vertices = [UL, UR, LL, LR];
+    return this.vertices;
   };
 
   // ===============================================================================================
@@ -26,6 +27,7 @@ export function Cell(x, y, resource) {
     const bottom = [this.vertices[2], this.vertices[3]];
     const left   = [this.vertices[0], this.vertices[2]];
     this.edges   = [top, right, bottom, left];
+    return this.edges;
   };
 
   // ===============================================================================================
@@ -33,3 +35,5 @@ export function Cell(x, y, resource) {
   this.computeVertices();
   this.computeEdges();
 }
+
+// module.exports = Cell;

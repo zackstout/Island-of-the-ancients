@@ -6,8 +6,8 @@ import { drawGrid } from './Drawing.js';
 import { generateTestEdges } from './Test.js';
 import { generateTestVertices } from './Test.js';
 
-const test_edges = generateTestEdges(20);
-const test_vertices = generateTestVertices(15);
+const test_edges = generateTestEdges(50);
+const test_vertices = generateTestVertices(30);
 
 // make the variables globally available (to all modules):
 window.test_edges = test_edges;
@@ -16,8 +16,9 @@ window.test_vertices = test_vertices;
 // ===============================================================================================
 
 window.onload = function() {
-  height = 500;
-  width = 500;
+  height = document.getElementById('island').height;
+  width = document.getElementById('island').width;
+  
   const canvas = document.getElementById('island');
   window.ctx = canvas.getContext('2d');
 

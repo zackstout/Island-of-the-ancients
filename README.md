@@ -13,3 +13,4 @@
 - Write the algorithm to determine whether a rod is connected to a power source (i.e. if there exists a continuous path of rods back to a source.)
 - Find a player's resource income for a turn given a board state.
 - Figure out a good way to let player place pieces on the board.
+- I'm having trouble with testing: It will work if we get rid of `export` syntax from our modules and use `module.exports`, but then the client-side won't work...
