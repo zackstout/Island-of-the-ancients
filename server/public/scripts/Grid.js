@@ -1,5 +1,6 @@
 
 const resources = ["stone", "iron", "gem"];
+const FEATURE_DETECTION_THRESHOLD = 10;
 
 import { Cell } from './Cell.js';
 import { edgeInArray } from './Test.js';
@@ -66,8 +67,9 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.selectedFeature = function(edgeDistances) {
-
+  this.selectedFeature = function(cell,edgeDistances) {
+    const threshold = FEATURE_DETECTION_THRESHOLD;
+    
     /*
     return {
       feature: "vertex" / "edge" / "cell"
