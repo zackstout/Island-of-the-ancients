@@ -66,7 +66,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.selectedFeature = function(edgeDistances) {
+  this.selectedFeature = function(cell, edgeDistances) {
 
     /*
     return {
