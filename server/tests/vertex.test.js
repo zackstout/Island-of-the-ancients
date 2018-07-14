@@ -11,5 +11,4 @@ describe('getDistance', function() {
   it('should have three digits after decimal', function() {
     assert.equal(getDistance({x:0, y:0}, {x:1, y:1}), 1.414);
   });
-
 });
