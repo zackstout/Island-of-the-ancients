@@ -1,10 +1,10 @@
 
-export function generateTestVertices(num) {
+export function generateTestVertices(num, grid) {
   let res = [];
   while (res.length < num) {
     const v = {
-      x: Math.floor(Math.random() * 12),
-      y: Math.floor(Math.random() * 12),
+      x: Math.floor(Math.random() * grid.numCellsW),
+      y: Math.floor(Math.random() * grid.numCellsH),
       occupant: Math.random() > 0.5 ? 'P1' : 'P2'
     };
     if (!vertexInArray(v, res)) res.push(v);
@@ -14,12 +14,12 @@ export function generateTestVertices(num) {
 
 // ===============================================================================================
 
-export function generateTestEdges(num) {
+export function generateTestEdges(num, grid) {
   let res = [];
   while (res.length < num) {
     const edge_start = {
-      x: Math.floor(Math.random() * 11),
-      y: Math.floor(Math.random() * 11)
+      x: Math.floor(Math.random() * grid.numCellsW - 1),
+      y: Math.floor(Math.random() * grid.numCellsH - 1)
     };
 
     const isVert = Math.random() > 0.5;

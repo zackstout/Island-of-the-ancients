@@ -10,11 +10,11 @@ export function Cell(x, y, resource) {
 
   // These need an occupant slot. Or maybe we don't need this at all.
   this.computeVertices = function() {
-    const UL = {x: this.x    , y: this.y    };
-    const UR = {x: this.x + 1, y: this.y    };
-    const LL = {x: this.x    , y: this.y + 1};
-    const LR = {x: this.x + 1, y: this.y + 1};
-    this.vertices = [UL, UR, LL, LR];
+    const UL = {pos: 'UL', x: this.x    , y: this.y    };
+    const UR = {pos: 'UR', x: this.x + 1, y: this.y    };
+    const BL = {pos: 'BL', x: this.x    , y: this.y + 1};
+    const BR = {pos: 'BR', x: this.x + 1, y: this.y + 1};
+    this.vertices = [UL, UR, BL, BR];
     return this.vertices;
   };
 

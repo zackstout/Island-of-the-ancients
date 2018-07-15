@@ -2,9 +2,7 @@
 const resources = ["stone", "iron", "gem"];
 
 import { Cell } from './Cell.js';
-import { edgeInArray } from './Test.js';
-import { vertexInArray } from './Test.js';
-
+import { edgeInArray, vertexInArray } from './Test.js';
 import { getDistance } from './Vertex.js';
 
 
@@ -72,6 +70,12 @@ export function Grid(h, w, numCellsH, numCellsW) {
       // console.log([top_distance, right_distance, bottom_distance, left_distance]);
       return [top_distance, right_distance, bottom_distance, left_distance];
   };
+
+  // ===============================================================================================
+
+
+
+
 
   // ===============================================================================================
 
