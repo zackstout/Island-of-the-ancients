@@ -9,8 +9,27 @@
 - Mechanics mechanics mechanics -- the idea is so nebulous right now, it could go in a lot of different directions. The goal is to find a simple set of rules that gives rise to a rich ecosystem of strategy and gameplay. The main thing is that we all have a say in and should feel invested in the game's mechanics.
 - Core decisions: How can players interact with the board? What units can they build? What prerequisites are there for building those units? Is there a cooldown time between building and placing on board? How many resources does each cost? Is there a limit on how many actions (of a specific kind, or at all) can be taken per turn? I never realized how many decisions go into making a game.
 
+- Can cells be depleted?
+- Each cell has a resource-richness index.
+- Limit on how many actions to take per turn?
+
+
 ## More Concrete Goals:
 - Write the algorithm to determine whether a rod is connected to a power source (i.e. if there exists a continuous path of rods back to a source.)
 - Find a player's resource income for a turn given a board state.
 - Figure out a good way to let player place pieces on the board.
 - I'm having trouble with testing: It will work if we get rid of `export` syntax from our modules and use `module.exports`, but then the client-side won't work...
+
+## Rules:
+- Game start: each play has randomly chosen power source.
+- To start, power supply generates resources from adjacent fields/cells.
+- Two resource types: iron and stone.
+- Player gets one free token each turn; additional tokens cost 1 iron.
+- Rods cost 1 iron, 1 stone.
+- Resources are added to player's bank account at start of their turn.
+- Player can place as many tokens as they can afford.
+- Play can only place a piece on an unoccupied vertex or edge.
+- A field/cell produces resources in proportion to the number of adjacent rods.
+- The harvest from a field/cell goes to the player with majority of tokens in adjacent vertices.
+
+- For UI clicking: do a two-part check to determine whether user is trying to place a token or a rod. Display a transparent token or rod on that spot.

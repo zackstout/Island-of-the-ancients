@@ -62,7 +62,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
     const edgeDistances = this.distanceToEdges(cell,point);
     console.log(edgeDistances);
     return this.selectedFeature(cell, edgeDistances);
-  }
+  };
 
   // ===============================================================================================
 
