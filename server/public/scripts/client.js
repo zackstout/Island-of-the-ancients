@@ -3,8 +3,7 @@
 let height, width, ctx, grid;
 import { Grid } from './Grid.js';
 import { drawGrid } from './Drawing.js';
-import { generateTestEdges } from './Test.js';
-import { generateTestVertices } from './Test.js';
+import { generateTestEdges, generateTestVertices } from './Test.js';
 
 const test_edges = generateTestEdges(50);
 const test_vertices = generateTestVertices(30);
@@ -106,9 +105,10 @@ function handleClick(e) {
 // ===============================================================================================
 
 function handleMouseMove(e) {
-  console.log(e);
+  // console.log(e);
   const mouse = {x: e.offsetX, y: e.offsetY};
   console.log(grid.detectBoardFeature(mouse));
+  grid.drawBoardFeature(grid.detectBoardFeature(mouse));
 }
 
 

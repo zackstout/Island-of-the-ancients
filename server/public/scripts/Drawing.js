@@ -47,6 +47,7 @@ function drawOccupiedEdges(edges, grid) {
     ctx.beginPath();
     ctx.moveTo(start_x, start_y);
     ctx.lineTo(end_x, end_y);
+    ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
     ctx.stroke();
 

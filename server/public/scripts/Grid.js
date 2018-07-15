@@ -2,9 +2,8 @@ const resources = ["stone", "iron", "gem"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
 import { Cell } from './Cell.js';
-import { edgeInArray } from './Test.js';
-import { vertexInArray } from './Test.js';
-
+import { edgeInArray, vertexInArray } from './Test.js';
+import { drawGrid } from './Drawing.js';
 import { getDistance } from './Vertex.js';
 
 
@@ -57,10 +56,38 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
+  this.drawBoardFeature = bf => {
+    if (bf.feature != 'cell') {
+      drawGrid(this, test_vertices, test_edges);
+    }
+
+    const w = this.cell_width;
+    const h = this.cell_height;
+
+    if (bf.feature == 'edge') {
+      console.log(bf);
+      ctx.beginPath();
+      ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
+      ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = 'green';
+      ctx.stroke();
+    }
+
+    if (bf.feature == 'vertex') {
+      ctx.fillStyle = 'green';
+      ctx.beginPath();
+      ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
+      ctx.fill();
+    }
+  };
+
+  // ===============================================================================================
+
   this.detectBoardFeature = function(point) {
     const cell = this.getClickedCell(point);
     const edgeDistances = this.distanceToEdges(cell,point);
-    console.log(edgeDistances);
+    // console.log(edgeDistances);
     return this.selectedFeature(cell, edgeDistances);
   };
 
@@ -113,7 +140,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
       edge2.forEach(vertex2 => {
         if (vertex1.x === vertex2.x && vertex1.y === vertex2.y) {
           result = vertex1;
-        } 
+        }
       })
     })
     return result;
