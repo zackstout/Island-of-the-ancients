@@ -13,7 +13,8 @@ window.onload = function() {
   width = document.getElementById('island').width;
 
   const canvas = document.getElementById('island');
-  window.ctx = canvas.getContext('2d');
+  ctx = canvas.getContext('2d');
+  window.ctx = ctx;
 
   grid = new Grid(height, width, 12, 12);
   console.log(grid);
@@ -53,7 +54,7 @@ function moveMouse(e) {
 
   const distances = grid.distanceToEdges(cell, mouse);
 
-  const threshhold = 5;
+  const threshhold = 8;
 
   let filtered = [];
 
@@ -84,14 +85,25 @@ function moveMouse(e) {
 
   drawGrid(grid, test_vertices, test_edges);
 
+  const w = grid.cell_width;
+  const h = grid.cell_height;
+
   // Edge:
   if (filtered.length == 1) {
-
+    ctx.beginPath();
+    ctx.moveTo(result[0].x * w, result[0].y * h);
+    ctx.lineTo(result[1].x * w, result[1].y * h);
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = 'green';
+    ctx.stroke();
   }
 
   // Vertex:
   if (filtered.length == 2) {
-
+    ctx.fillStyle = 'green';
+    ctx.beginPath();
+    ctx.arc(result.x * w, result.y * h, 10, 0, 2*Math.PI);
+    ctx.fill();
   }
 }
 
