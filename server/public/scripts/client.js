@@ -29,6 +29,7 @@ window.onload = function() {
 
   // Determine which cell was clicked on, find nearest vertex:
   canvas.addEventListener("click", handleClick);
+  canvas.addEventListener("mousemove",handleMouseMove);
 };
 
 // ===============================================================================================
@@ -44,7 +45,11 @@ function handleClick(e) {
 
 // ===============================================================================================
 
-
+function handleMouseMove(e) {
+  console.log(e);
+  const mouse = {x: e.offsetX, y: e.offsetY};
+  console.log(grid.detectBoardFeature(mouse));
+}
 
 
 
