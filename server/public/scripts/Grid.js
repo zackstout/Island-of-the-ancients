@@ -116,30 +116,30 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.getNearestEdge = function(point) {
-    const cell = this.getClickedCell(point);
-    let minDist = 1000;
-    let closestEdge = [];
-
-    cell.edges.forEach(edge => {
-      const w = this.cell_width;
-      const h = this.cell_height;
-      const midpoint = {
-        x: w * edge[0].x + w/2 * (edge[1].x - edge[0].x),
-        y: h * edge[0].y + h/2 * (edge[1].y - edge[0].y)
-      }; // These should always be positive if we stick to LR/UD convention for edges.
-
-      const d = getDistance(point, midpoint);
-
-      if (d < minDist) {
-        minDist = d;
-        closestEdge = edge;
-      }
-    });
-
-    console.log(cell, closestEdge);
-    return closestEdge;
-  };
+  // this.getNearestEdge = function(point) {
+  //   const cell = this.getClickedCell(point);
+  //   let minDist = 1000;
+  //   let closestEdge = [];
+  //
+  //   cell.edges.forEach(edge => {
+  //     const w = this.cell_width;
+  //     const h = this.cell_height;
+  //     const midpoint = {
+  //       x: w * edge[0].x + w/2 * (edge[1].x - edge[0].x),
+  //       y: h * edge[0].y + h/2 * (edge[1].y - edge[0].y)
+  //     }; // These should always be positive if we stick to LR/UD convention for edges.
+  //
+  //     const d = getDistance(point, midpoint);
+  //
+  //     if (d < minDist) {
+  //       minDist = d;
+  //       closestEdge = edge;
+  //     }
+  //   });
+  //
+  //   console.log(cell, closestEdge);
+  //   return closestEdge;
+  // };
 
   // ===============================================================================================
 

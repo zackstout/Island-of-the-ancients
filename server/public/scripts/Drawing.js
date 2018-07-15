@@ -17,9 +17,9 @@ export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   });
 
   // Pretty ugly to pass around grid like this...
-  drawOccupiedEdges(occupied_edges, grid);
-  drawOccupiedVertices(occupied_vertices, grid);
-  drawNumOccupiedEdgesPerCell(grid);
+  drawOccupiedEdges(occupied_edges, grid, ctx);
+  drawOccupiedVertices(occupied_vertices, grid, ctx);
+  drawNumOccupiedEdgesPerCell(grid, ctx);
 }
 
 // ===============================================================================================
@@ -48,6 +48,7 @@ function drawOccupiedEdges(edges, grid) {
     ctx.moveTo(start_x, start_y);
     ctx.lineTo(end_x, end_y);
     ctx.lineWidth = 5;
+    ctx.strokeStyle = 'black';
     ctx.stroke();
 
     const neighbors = grid.getNeighborsOfEdge(edge);

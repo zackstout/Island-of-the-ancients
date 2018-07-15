@@ -3,12 +3,16 @@
   <head>
     <meta charset="utf-8">
     <title>Island of the Ancients</title>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js" charset="utf-8"></script>
 
-    <!-- <script src="vendors/p5.min.js" charset="utf-8"></script> -->
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js" charset="utf-8"></script>
     <script type="module" src="scripts/client.js" charset="utf-8"></script>
+
   </head>
   <body style="margin:50px">
+    <div id="otherUsers">Other users online:</div> <br> <hr>
+    <div id="log">Messages:<br> </div> <hr>
     <canvas id="island" height="500" width="500"></canvas>
   </body>
 </html>

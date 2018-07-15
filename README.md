@@ -12,16 +12,17 @@
 - Can cells be depleted?
 - Each cell has a resource-richness index.
 - Limit on how many actions to take per turn?
+- We should incorporate more Go-like rules -- board state changes depending on patterns of pieces. In particular you can attack enemy pieces in this way.
 
 
 ## More Concrete Goals:
 - Write the algorithm to determine whether a rod is connected to a power source (i.e. if there exists a continuous path of rods back to a source.)
 - Find a player's resource income for a turn given a board state.
 - Figure out a good way to let player place pieces on the board.
-- I'm having trouble with testing: It will work if we get rid of `export` syntax from our modules and use `module.exports`, but then the client-side won't work...
+- Let's try to throw some `async/await` in there, I still don't really get it
 
 ## Rules:
-- Game start: each play has randomly chosen power source.
+- Game start: each player has randomly located power source.
 - To start, power supply generates resources from adjacent fields/cells.
 - Two resource types: iron and stone.
 - Player gets one free token each turn; additional tokens cost 1 iron.
@@ -33,3 +34,15 @@
 - The harvest from a field/cell goes to the player with majority of tokens in adjacent vertices.
 
 - For UI clicking: do a two-part check to determine whether user is trying to place a token or a rod. Display a transparent token or rod on that spot.
+
+
+
+## Refactoring:
+pure functions:
+- get vertices
+- get edges
+- convert index to pixel and vice versa (need to know grid params)
+- get distance
+- vertex in array
+- edge in array
+- make resource for cell
