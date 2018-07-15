@@ -12,7 +12,7 @@ const test_vertices = generateTestVertices(30);
 // make the variables globally available (to all modules):
 window.test_edges = test_edges;
 window.test_vertices = test_vertices;
-
+console.log({test_edges},{test_vertices});
 // ===============================================================================================
 
 window.onload = function() {
@@ -90,6 +90,7 @@ window.onload = function() {
 
   // Determine which cell was clicked on, find nearest vertex:
   canvas.addEventListener("click", handleClick);
+  canvas.addEventListener("mousemove",handleMouseMove);
 };
 
 // ===============================================================================================
@@ -104,7 +105,11 @@ function handleClick(e) {
 
 // ===============================================================================================
 
-
+function handleMouseMove(e) {
+  console.log(e);
+  const mouse = {x: e.offsetX, y: e.offsetY};
+  console.log(grid.detectBoardFeature(mouse));
+}
 
 
 

@@ -1,5 +1,5 @@
-
 const resources = ["stone", "iron", "gem"];
+const FEATURE_DETECTION_THRESHOLD = 10;
 
 import { Cell } from './Cell.js';
 import { edgeInArray } from './Test.js';
@@ -43,8 +43,14 @@ export function Grid(h, w, numCellsH, numCellsW) {
   // ===============================================================================================
 
   this.getClickedCell = function(point) {
-    const cell_x = Math.floor(point.x / this.cell_width);
-    const cell_y = Math.floor(point.y / this.cell_height);
+    let cell_x = Math.floor(point.x / this.cell_width);
+    let cell_y = Math.floor(point.y / this.cell_height);
+    if (cell_x === numCellsW){
+      cell_x -= 1;
+    }
+    if (cell_y === numCellsH) {
+      cell_y -= 1;
+    }
     const cell = this.findCell(cell_x, cell_y);
     return cell;
   };
@@ -54,36 +60,64 @@ export function Grid(h, w, numCellsH, numCellsW) {
   this.detectBoardFeature = function(point) {
     const cell = this.getClickedCell(point);
     const edgeDistances = this.distanceToEdges(cell,point);
+    console.log(edgeDistances);
     return this.selectedFeature(cell, edgeDistances);
   };
 
   // ===============================================================================================
 
-  this.distanceToEdges = function(cell, point) {
-      const w = this.cell_width;
-      const h = this.cell_height;
-
-      // Top, Right, Bottom, Left:
-      const top_distance    = point.y - cell.edges[0][0].y * h;
-      const right_distance  = cell.edges[1][0].x * w - point.x;
-      const bottom_distance = cell.edges[2][0].y * h - point.y;
-      const left_distance   = point.x - cell.edges[3][0].x * w;
-
-      // console.log([top_distance, right_distance, bottom_distance, left_distance]);
-      return [top_distance, right_distance, bottom_distance, left_distance];
-  };
+  this.distanceToEdges = function(cell,point){
+    return [
+      Math.abs(cell.edges[0][0].y * this.cell_height - point.y),
+      Math.abs(cell.edges[1][0].x * this.cell_width - point.x),
+      Math.abs(cell.edges[2][0].y * this.cell_height - point.y),
+      Math.abs(cell.edges[3][0].x * this.cell_width - point.x)
+    ];
+  }
 
   // ===============================================================================================
 
-  this.selectedFeature = function(cell, edgeDistances) {
-
-    /*
-    return {
-      feature: "vertex" / "edge" / "cell"
-      location: {x,y} / [{x,y},{x,y}] / {x,y}
+  this.selectedFeature = function(cell,edgeDistances) {
+    let result = {
+      feature: null,
+      location: null
+    };
+    const threshold = FEATURE_DETECTION_THRESHOLD;
+    let featureIndex = [];
+    edgeDistances.forEach((d,i) => {
+      if (d < threshold) {
+        featureIndex.push(i);
+      }
+    });
+    if (featureIndex.length === 2) {
+      result.feature = "vertex";
+      result.location = this.getCommonVertex(cell.edges[featureIndex[0]],cell.edges[featureIndex[1]]);
+    } else if (featureIndex.length === 1) {
+      result.feature = "edge";
+      result.location = cell.edges[featureIndex[0]];
+    } else {
+      result.feature = "cell";
+      result.location = {
+        x: cell.x,
+        y: cell.y
+      }
     }
-    */
-  };
+    return result;
+  }
+
+  // ===============================================================================================
+  // find a way to do this where it stops immediately if it finds the correct vertex. I guess could use regular for loops.
+  this.getCommonVertex = function(edge1,edge2) {
+    let result = null;
+    edge1.forEach(vertex1 => {
+      edge2.forEach(vertex2 => {
+        if (vertex1.x === vertex2.x && vertex1.y === vertex2.y) {
+          result = vertex1;
+        } 
+      })
+    })
+    return result;
+  }
 
   // ===============================================================================================
 
