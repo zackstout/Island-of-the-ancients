@@ -6,7 +6,6 @@ function Player(id, resources_arr) {
     iron: resources_arr[0],
     stone: resources_arr[1]
   };
-
 }
 
 module.exports = Player;

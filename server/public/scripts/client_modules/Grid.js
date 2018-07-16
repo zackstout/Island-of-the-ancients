@@ -1,51 +1,26 @@
-const resources = ["stone", "iron", "gem"];
+
+const resources = ["iron", "stone"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
-import { Cell } from './Cell.js';
-import { edgeInArray, vertexInArray } from './Test.js';
-import { drawGrid } from './Drawing.js';
-import { getDistance } from './Vertex.js';
+import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../functions.js';
+import { drawOccupiedVertices, drawOccupiedEdges, drawNumOccupiedEdgesPerCell } from './drawing.js';
 
-
-export function Grid(h, w, numCellsH, numCellsW) {
+export function Grid(w, h, numCellsW, numCellsH) {
   this.numCellsH = numCellsH;
   this.numCellsW = numCellsW;
   this.cell_height = h / numCellsH;
   this.cell_width = w / numCellsW;
 
   this.cells = [];
-
-
-
-  // ===============================================================================================
-
-  this.generateCells = function() {
-    for (let i=0; i < this.numCellsW; i++) {
-      for (let j=0; j < this.numCellsH; j++) {
-        const rarity = 27;
-        const random_int = Math.floor(Math.random() * rarity);
-        let resource;
-
-        if (random_int === 0) {
-          resource = resources[2];
-        } else if (random_int < Math.ceil(rarity/2)) {
-          resource = resources[0];
-        } else {
-          resource = resources[1];
-        }
-
-        // let resource = Math.random() > 0.5 ? resources[0] : resources[1];
-        const cell = new Cell(i, j, resource);
-        this.cells.push(cell);
-      }
-    }
-  };
+  this.occ_vertices = [];
+  this.occ_edges = [];
 
   // ===============================================================================================
 
   this.getClickedCell = function(point) {
     let cell_x = Math.floor(point.x / this.cell_width);
     let cell_y = Math.floor(point.y / this.cell_height);
+    // I don't believe this condition should ever be true -- if numCellsW is 12, max of cell_x should be 11:
     if (cell_x === numCellsW){
       cell_x -= 1;
     }
@@ -53,6 +28,8 @@ export function Grid(h, w, numCellsH, numCellsW) {
       cell_y -= 1;
     }
     const cell = this.findCell(cell_x, cell_y);
+    console.log(cell);
+
     return cell;
   };
 
@@ -60,7 +37,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   this.drawBoardFeature = bf => {
     if (bf.feature != 'cell') {
-      drawGrid(this, test_vertices, test_edges);
+      this.drawGrid(this.occ_vertices, this.occ_edges);
     }
 
     const w = this.cell_width;
@@ -88,7 +65,7 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   this.detectBoardFeature = function(point) {
     const cell = this.getClickedCell(point);
-    const edgeDistances = this.distanceToEdges(cell,point);
+    const edgeDistances = this.distanceToEdges(cell, point);
     // console.log(edgeDistances);
     return this.selectedFeature(cell, edgeDistances);
   };
@@ -96,13 +73,14 @@ export function Grid(h, w, numCellsH, numCellsW) {
   // ===============================================================================================
 
   this.distanceToEdges = function(cell,point){
+    const edges = computeEdges(cell);
     return [
-      Math.abs(cell.edges[0][0].y * this.cell_height - point.y),
-      Math.abs(cell.edges[1][0].x * this.cell_width - point.x),
-      Math.abs(cell.edges[2][0].y * this.cell_height - point.y),
-      Math.abs(cell.edges[3][0].x * this.cell_width - point.x)
+      Math.abs(edges[0][0].y * this.cell_height - point.y),
+      Math.abs(edges[1][0].x * this.cell_width - point.x),
+      Math.abs(edges[2][0].y * this.cell_height - point.y),
+      Math.abs(edges[3][0].x * this.cell_width - point.x)
     ];
-  }
+  };
 
   // ===============================================================================================
 
@@ -112,27 +90,31 @@ export function Grid(h, w, numCellsH, numCellsW) {
       location: null
     };
     const threshold = FEATURE_DETECTION_THRESHOLD;
+
     let featureIndex = [];
     edgeDistances.forEach((d,i) => {
       if (d < threshold) {
         featureIndex.push(i);
       }
     });
+
+    const edges = computeEdges(cell);
+    
     if (featureIndex.length === 2) {
       result.feature = "vertex";
-      result.location = this.getCommonVertex(cell.edges[featureIndex[0]],cell.edges[featureIndex[1]]);
+      result.location = this.getCommonVertex(edges[featureIndex[0]], edges[featureIndex[1]]);
     } else if (featureIndex.length === 1) {
       result.feature = "edge";
-      result.location = cell.edges[featureIndex[0]];
+      result.location = edges[featureIndex[0]];
     } else {
       result.feature = "cell";
       result.location = {
         x: cell.x,
         y: cell.y
-      }
+      };
     }
     return result;
-  }
+  };
 
   // ===============================================================================================
   // find a way to do this where it stops immediately if it finds the correct vertex. I guess could use regular for loops.
@@ -143,62 +125,36 @@ export function Grid(h, w, numCellsH, numCellsW) {
         if (vertex1.x === vertex2.x && vertex1.y === vertex2.y) {
           result = vertex1;
         }
-      })
-    })
+      });
+    });
     return result;
-  }
-
-  // ===============================================================================================
-
-  this.getNearestVertex = function (point) {
-    const cell = this.getClickedCell(point);
-
-    const vertices = cell.vertices.map(v => {
-      const res = {x: v.x * this.cell_width, y: v.y * this.cell_height};
-      return res;
-    });
-
-    let minDist = 1000;
-    let closestVertex = {};
-
-    vertices.forEach(v => {
-      const d = getDistance(point, v);
-      if (d < minDist) {
-        minDist = d;
-        closestVertex.x = Math.round(v.x / this.cell_width);
-        closestVertex.y = Math.round(v.y / this.cell_height);
-      }
-    });
-
-    return closestVertex;
   };
 
   // ===============================================================================================
-
-  this.getNearestEdge = function(point) {
-    const cell = this.getClickedCell(point);
-    let minDist = 1000;
-    let closestEdge = [];
-
-    cell.edges.forEach(edge => {
-      const w = this.cell_width;
-      const h = this.cell_height;
-      const midpoint = {
-        x: w * edge[0].x + w/2 * (edge[1].x - edge[0].x),
-        y: h * edge[0].y + h/2 * (edge[1].y - edge[0].y)
-      }; // These should always be positive if we stick to LR/UD convention for edges.
-
-      const d = getDistance(point, midpoint);
-
-      if (d < minDist) {
-        minDist = d;
-        closestEdge = edge;
-      }
-    });
-
-    console.log(cell, closestEdge);
-    return closestEdge;
-  };
+  //
+  // this.getNearestVertex = function (point) {
+  //   const cell = this.getClickedCell(point);
+  //
+  //   const cell_verts = computeVertices(cell);
+  //   const vertices = cell_verts.vertices.map(v => {
+  //     const res = {x: v.x * this.cell_width, y: v.y * this.cell_height};
+  //     return res;
+  //   });
+  //
+  //   let minDist = 1000;
+  //   let closestVertex = {};
+  //
+  //   vertices.forEach(v => {
+  //     const d = getDistance(point, v);
+  //     if (d < minDist) {
+  //       minDist = d;
+  //       closestVertex.x = Math.round(v.x / this.cell_width);
+  //       closestVertex.y = Math.round(v.y / this.cell_height);
+  //     }
+  //   });
+  //
+  //   return closestVertex;
+  // };
 
   // ===============================================================================================
 
@@ -341,9 +297,30 @@ export function Grid(h, w, numCellsH, numCellsW) {
       // console.log(e.data.grid);
       const grid = e.data.grid;
       const cell = grid.getClickedCell(mouse);
-      grid.getNearestVertex(mouse);
-      grid.getNearestEdge(mouse);
+      // grid.getNearestVertex(mouse);
+      // grid.getNearestEdge(mouse);
       grid.distanceToEdges(cell, mouse);
+  };
+
+
+  this.drawGrid = function(occupied_vertices=[], occupied_edges=[]) {
+    // let ctx = window.ctx;
+
+    this.cells.forEach(cell => {
+      let col;
+      switch(cell.resource) {
+        case 'stone': col = 'gray'; break;
+        case 'iron': col = 'brown'; break;
+        // case 'gem': col = 'plum'; break;
+      }
+      ctx.fillStyle = col;
+      ctx.fillRect(cell.x * this.cell_width, cell.y * this.cell_height, this.cell_width, this.cell_height);
+    });
+
+    // Pretty ugly to pass around grid like this...
+    drawOccupiedEdges(occupied_edges, this);
+    drawOccupiedVertices(occupied_vertices, this);
+    // drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
   };
 
   // ===============================================================================================
@@ -355,5 +332,10 @@ export function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
-  this.generateCells();
+
+  // No longer do we want to do this automatically...Or ever, on the client side.
+  // this.generateCells();
 }
+
+
+// ===============================================================================================

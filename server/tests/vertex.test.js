@@ -1,5 +1,5 @@
 
-import { getDistance } from '../public/scripts/client_modules/Vertex.js';
+import { getDistance } from '../public/scripts/functions.js';
 
 var assert = require('assert');
 

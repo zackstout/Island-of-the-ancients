@@ -13,10 +13,11 @@ export function computeVertices(cell) {
 }
 
 export function computeEdges(cell) {
-  const top    = [cell.vertices[0], cell.vertices[1]];
-  const right  = [cell.vertices[1], cell.vertices[3]];
-  const bottom = [cell.vertices[2], cell.vertices[3]];
-  const left   = [cell.vertices[0], cell.vertices[2]];
+  const vertices = computeVertices(cell);
+  const top    = [vertices[0], vertices[1]];
+  const right  = [vertices[1], vertices[3]];
+  const bottom = [vertices[2], vertices[3]];
+  const left   = [vertices[0], vertices[2]];
   const edges   = [top, right, bottom, left];
   return edges;
 }
@@ -27,4 +28,24 @@ export function handleClick(e) {
   grid.getNearestVertex(mouse);
   // grid.getNearestEdge(mouse);
   grid.distanceToEdges(cell, mouse);
+}
+
+
+// ===============================================================================================
+
+export function vertexInArray(v, arr) {
+  for (let i=0; i < arr.length; i++) {
+    if (arr[i].x == v.x && arr[i].y == v.y) return true;
+  }
+  return false;
+}
+
+// ===============================================================================================
+
+// Note: this depends on convention (LRUD) being followed. Otherwise we may overlap.
+export function edgeInArray(e, arr) {
+  for (let i=0; i < arr.length; i++) {
+    if (arr[i][0].x == e[0].x && arr[i][0].y == e[0].y && arr[i][1].x == e[1].x && arr[i][1].y == e[1].y) return true;
+  }
+  return false;
 }

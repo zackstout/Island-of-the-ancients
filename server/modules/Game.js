@@ -6,18 +6,19 @@ const resources = ['iron', 'stone'];
 function Game(p1, p2, w, h) {
   this.player1 = new Player(p1, [0, 0]);
   this.player2 = new Player(p2, [0, 0]);
-  this.mover = this.player1;
-  this.historyOfMoves = [];
   this.numCellsW = w;
   this.numCellsH = h;
 
+  this.mover = this.player1;
+  this.historyOfMoves = [];
+
   this.generateNexuses = function() {
-    const x1 = Math.floor(Math.random() * this.grid.numCellsW);
-    const y1 = Math.floor(Math.random() * this.grid.numCellsH);
-    const x2 = Math.floor(Math.random() * this.grid.numCellsW);
-    const y2 = Math.floor(Math.random() * this.grid.numCellsH);
+    const x1 = Math.floor(Math.random() * this.numCellsW);
+    const y1 = Math.floor(Math.random() * this.numCellsH);
+    const x2 = Math.floor(Math.random() * this.numCellsW);
+    const y2 = Math.floor(Math.random() * this.numCellsH);
     while (this.x2 == this.x1) {
-      this.x2 = Math.floor(Math.random() * this.grid.numCellsW);
+      this.x2 = Math.floor(Math.random() * this.numCellsW);
     }
     this.player1.nexus = {x: x1, y: y1};
     this.player2.nexus = {x: x2, y: y2};
@@ -42,6 +43,7 @@ function Game(p1, p2, w, h) {
   };
 
   this.generateNexuses();
+  this.generateCells();
 }
 
 
