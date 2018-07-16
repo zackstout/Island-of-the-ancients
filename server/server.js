@@ -44,6 +44,27 @@ io.on('connection', socket => {
 
   // ===============================================================================================
 
+  // Helper function for below function, submitMove:
+  function computeCosts(verts, edges) {
+    let res = {
+      iron: 0,
+      stone: 0
+    };
+
+    res.iron += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.iron, 0);
+    res.iron += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.iron, 0);
+    res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
+    res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
+
+    // Why is this getting bigger every time.....?
+    console.log("RESULT of REDUCING is...", res);
+    return res;
+  }
+
+
+
+  // ===============================================================================================
+
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
 
@@ -65,6 +86,15 @@ io.on('connection', socket => {
     if (game.mover == game.player1) game.mover = game.player2;
     else game.mover = game.player1;
 
+    // Deduct costs for proper player:
+    if (socket.id == game.player1.id) {
+      game.player1.bank.iron -= computeCosts(data.vertices, data.edges).iron;
+      game.player1.bank.stone -= computeCosts(data.vertices, data.edges).stone;
+    } else {
+      game.player2.bank.iron -= computeCosts(data.vertices, data.edges).iron;
+      game.player2.bank.stone -= computeCosts(data.vertices, data.edges).stone;
+    }
+
     // Ugly:
     let enemyId;
     if (data.gameId.indexOf(socket.id) == 0) {
@@ -72,11 +102,14 @@ io.on('connection', socket => {
     } else {
       enemyId = data.gameId.substring(0, data.gameId.indexOf(socket.id));
     }
-    console.log(game);
+    // console.log(game);
     socket.broadcast.to(enemyId).emit('submitMove', game);
   });
 
   // ===============================================================================================
+
+
+
 
 
   // ===============================================================================================
