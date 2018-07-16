@@ -15,6 +15,9 @@ export function Grid(w, h, numCellsW, numCellsH) {
   this.occ_vertices = [];
   this.occ_edges = [];
 
+  this.player = '';
+  this.enemy = '';
+
   // ===============================================================================================
 
   this.getClickedCell = function(point) {
@@ -173,8 +176,22 @@ export function Grid(w, h, numCellsW, numCellsH) {
           cell.numOccEdges ++;
         }
       });
+
+      // Also check for proximity to NEXUS when computing resource generation:
+      cell.numOccEdges += checkForNexus(cell, this.player.nexus);
+      cell.numOccEdges += checkForNexus(cell, this.enemy.nexus);
     });
   };
+
+
+  function checkForNexus(cell, nex) {
+    const verts = computeVertices(cell);
+    for (let i=0; i < verts.length; i++) {
+      const vtx = verts[i];
+      if (vtx.x == nex.x && vtx.y == nex.y) return 1;
+    }
+    return 0;
+  }
 
   // ===============================================================================================
 

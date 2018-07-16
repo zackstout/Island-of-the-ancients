@@ -37,6 +37,9 @@ socket.on('startGame', function(game) {
   if (socket.id == game.player1.id || socket.id == game.player2.id) {
 
     const grid = new Grid(CANVAS_WIDTH, CANVAS_HEIGHT, game.numCellsW, game.numCellsH);
+    grid.player = socket.id == game.player1.id ? game.player1 : game.player2;
+    grid.enemy = socket.id == game.player1.id ? game.player2 : game.player1;
+
     grid.cells = game.boardState.cells;
     const occ_vertices = game.boardState.occupied_vertices;
     const occ_edges = game.boardState.occupied_edges;
