@@ -90,7 +90,8 @@ io.on('connection', socket => {
     }
     // console.log(game);
     socket.broadcast.to(enemyId).emit('submitMove', game);
-    socket.broadcast.to(socket.id).emit('submitMove', game);
+    // socket.broadcast.to(socket.id).emit('submitMove', game);
+    socket.emit('submitMove', game);
 
   });
 

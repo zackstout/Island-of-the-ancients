@@ -287,7 +287,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
       grid.occ_vertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
     }
     grid.drawBoardFeature(feature);
-    console.log(grid);
+    // console.log(grid);
   };
 
   // ===============================================================================================
