@@ -45,13 +45,48 @@ io.on('connection', socket => {
 
   // ===============================================================================================
 
+  // Relies on arr1 being a subset of arr2:
+  function getDifferenceVertices(sub_arr, arr) {
+    let res = [];
+    arr.forEach(v1 => {
+      let contained = false;
+      sub_arr.forEach(v2 => {
+        if (v1.x == v2.x && v1.y == v2.y) {
+          contained = true;
+        }
+      });
+      if (!contained) {
+        res.push(v1);
+      }
+    });
+    return res;
+  }
+
+  // Relies on arr1 being a subset of arr2:
+  function getDifferenceEdges(sub_arr, arr) {
+    let res = [];
+    arr.forEach(e1 => {
+      let contained = false;
+      sub_arr.forEach(e2 => {
+        if (e1[0].x == e2[0].x && e1[0].y == e2[0].y && e1[1].x == e2[1].x && e1[1].y == e2[1].y) {
+          contained = true;
+        }
+      });
+      if (!contained) {
+        res.push(e1);
+      }
+    });
+    return res;
+  }
+
   // The problem is that this is only BROADCASTING: so it doesn't update the player who just clicked's board.
   // It's starting to feel like what we want is to just emit the Move itself from the Client, rather than the whole enchilada.
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
 
-    const new_verts = _.difference(game.boardState.occupied_vertices, data.vertices);
-    const new_edges = _.difference(game.boardState.occupied_edges, data.edges);
+    const new_verts = getDifferenceVertices(game.boardState.occupied_vertices, data.vertices);
+    const new_edges = getDifferenceEdges(game.boardState.occupied_edges, data.edges);
+    // console.log("NEW STUFF: ", new_verts, new_edges);
 
     game.historyOfMoves.push({
       move_number: game.moveNumber,
@@ -89,10 +124,11 @@ io.on('connection', socket => {
       enemyId = data.gameId.substring(0, data.gameId.indexOf(socket.id));
     }
     // console.log(game);
-    socket.broadcast.to(enemyId).emit('submitMove', game);
-    // socket.broadcast.to(socket.id).emit('submitMove', game);
-    socket.emit('submitMove', game);
 
+
+    // Communicate with enemy player and player who just moved:
+    socket.broadcast.to(enemyId).emit('submitMove', game);
+    socket.emit('submitMove', game);
   });
 
   // ===============================================================================================

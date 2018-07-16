@@ -14,6 +14,10 @@
 - Limit on how many actions to take per turn?
 
 
+- Plenty of UI issues: it lets me place the same rod twice, lets me place over stuff that exists, etc edgeDistances
+
+
+
 ## More Concrete Goals:
 - Write the algorithm to determine whether a rod is connected to a power source (i.e. if there exists a continuous path of rods back to a source.)
 - Find a player's resource income for a turn given a board state.

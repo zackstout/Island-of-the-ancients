@@ -64,7 +64,6 @@ socket.on('startGame', function(game) {
     // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
 
     // Nice -- only listen on active player's clicks:
-    // Hmm why doesn't it work in submitMove?
     if (grid.player == game.player2) {
       $('#island').off('click');
     }
@@ -77,9 +76,8 @@ socket.on('startGame', function(game) {
       Iron: ${grid.player.bank.iron} <br/>
       Stone: ${grid.player.bank.stone}
     `;
-    // Why isn't this working....
-    $('.bank_account').html(bank_html);
 
+    $('.bank_account').html(bank_html);
   }
 
 });
@@ -99,16 +97,28 @@ socket.on('submitMove', gameState => {
     console.log('well hello there mover');
     $('#island').on('click', {grid: grid}, grid.handleClick);
   } else {
-    // No one will see this -- because it always emits to the next mover!!!
     console.log('you are not the mover!');
     $('#island').off('click');
   }
 
-  // console.log(gameState);
-
   // Is it your move?
   const html_out = socket.id == gameState.mover.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
   $('.moveOrWait').html(html_out);
+
+  let bank_html;
+  if (gameState.player1.id == socket.id) {
+    bank_html = `
+      Iron: ${gameState.player1.bank.iron} <br/>
+      Stone: ${gameState.player1.bank.stone}
+    `;
+  } else {
+    bank_html = `
+      Iron: ${gameState.player2.bank.iron} <br/>
+      Stone: ${gameState.player2.bank.stone}
+    `;
+  }
+
+  $('.bank_account').html(bank_html);
 });
 
 // ===============================================================================================
