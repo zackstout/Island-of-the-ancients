@@ -42,37 +42,23 @@ io.on('connection', socket => {
     io.emit('startGame', game); // Should this be called same thing? Guess it doesn't matter.
   });
 
-  // ===============================================================================================
-
-  // Helper function for below function, submitMove:
-  function computeCosts(verts, edges) {
-    let res = {
-      iron: 0,
-      stone: 0
-    };
-
-    res.iron += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.iron, 0);
-    res.iron += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.iron, 0);
-    res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
-    res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
-
-    // Why is this getting bigger every time.....?
-    console.log("RESULT of REDUCING is...", res);
-    return res;
-  }
-
-
 
   // ===============================================================================================
 
+  // The problem is that this is only BROADCASTING: so it doesn't update the player who just clicked's board.
+  // It's starting to feel like what we want is to just emit the Move itself from the Client, rather than the whole enchilada.
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
+
+    const new_verts = _.difference(game.boardState.occupied_vertices, data.vertices);
+    const new_edges = _.difference(game.boardState.occupied_edges, data.edges);
 
     game.historyOfMoves.push({
       move_number: game.moveNumber,
       mover: socket.id,
-      verts_placed: _.difference(game.boardState.occupied_vertices, data.vertices),
-      edges_placed: _.difference(game.boardState.occupied_edges, data.edges)
+      // It seems possible that this is one of those situations where it's grabbing the object's later-updated value here.... (??)
+      verts_placed: new_verts,
+      edges_placed: new_edges
     });
 
     // NOTE: Next step would be to subtract from their resources to pay expenses.
@@ -88,11 +74,11 @@ io.on('connection', socket => {
 
     // Deduct costs for proper player:
     if (socket.id == game.player1.id) {
-      game.player1.bank.iron -= computeCosts(data.vertices, data.edges).iron;
-      game.player1.bank.stone -= computeCosts(data.vertices, data.edges).stone;
+      game.player1.bank.iron -= computeCosts(new_verts, new_edges).iron;
+      game.player1.bank.stone -= computeCosts(new_verts, new_edges).stone;
     } else {
-      game.player2.bank.iron -= computeCosts(data.vertices, data.edges).iron;
-      game.player2.bank.stone -= computeCosts(data.vertices, data.edges).stone;
+      game.player2.bank.iron -= computeCosts(new_verts, new_edges).iron;
+      game.player2.bank.stone -= computeCosts(new_verts, new_edges).stone;
     }
 
     // Ugly:
@@ -104,6 +90,8 @@ io.on('connection', socket => {
     }
     // console.log(game);
     socket.broadcast.to(enemyId).emit('submitMove', game);
+    socket.broadcast.to(socket.id).emit('submitMove', game);
+
   });
 
   // ===============================================================================================
@@ -128,6 +116,31 @@ io.on('connection', socket => {
 
   // ===============================================================================================
 });
+
+
+
+// ===============================================================================================
+
+// Helper function for submitMove:
+function computeCosts(verts, edges) {
+  let res = {
+    iron: 0,
+    stone: 0
+  };
+
+  res.iron += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.iron, 0);
+  res.iron += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.iron, 0);
+  res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
+  res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
+
+  // Why is this getting bigger every time.....? Oh probably because data.vertices is! Duh!
+  // Hmm.... calling twice....
+  console.log("RESULT of REDUCING is...", res);
+  return res;
+}
+
+
+
 
 
 app.use(express.static('server/public'));

@@ -28,7 +28,7 @@ export function drawOccupiedEdges(edges, grid) {
     ctx.lineWidth = 5;
     ctx.stroke();
 
-    const neighbors = grid.getNeighborsOfEdge(edge);
+    // const neighbors = grid.getNeighborsOfEdge(edge);
     // console.log(neighbors);
   });
 }
@@ -39,7 +39,7 @@ export function drawEachCellsResourceGeneration(grid) {
   // "get" seems inappropriate: really we're telling it to update the Grid's state...
   grid.getEachCellsResourceValue(grid.occ_edges);
   grid.getEachCellsOwner(grid.occ_vertices);
-  grid.getNextHarvest();
+  // grid.getNextHarvest();
 
   grid.cells.forEach(cell => {
     const text_x = cell.x * grid.cell_width + grid.cell_width/2;

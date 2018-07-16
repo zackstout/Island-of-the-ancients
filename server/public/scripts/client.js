@@ -1,6 +1,5 @@
 
-// It's clearly not going to work to make grid a global var:
-let height, width, ctx, grid;
+let height, width;
 
 import { startClickListeners } from './client_modules/click_handlers.js';
 import { socket } from './client_modules/socket_connection.js';
@@ -14,12 +13,7 @@ window.onload = function() {
   startClickListeners();
 
   const canvas = document.getElementById('island');
-  window.island_canvas = canvas;
   window.ctx = canvas.getContext('2d');
-
-  // These can't be initialized *until* there is a grid:
-  // $(canvas).on("click", {grid: grid}, grid.handleClick);
-  // $(canvas).on("mousemove", {grid: grid}, grid.handleMouseMove);
 };
 
 // ===============================================================================================

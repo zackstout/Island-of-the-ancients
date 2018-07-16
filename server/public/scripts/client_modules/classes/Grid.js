@@ -137,30 +137,30 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // NOTE: this is wrong for the literal edge cases, i think...:
   // Get the 1 or 2 cells that border a given edge:
-  this.getNeighborsOfEdge = function(edge) {
-    let res = [];
-
-    // Vertical edge:
-    if (edge[0].x == edge[1].x) { // edge[0] is starting vertex, edge[1] is ending vertex.
-      if (edge[0].x != 0) {
-        res.push(this.findCell(edge[0].x - 1, edge[0].y));
-      }
-      if (edge[1].x != this.numCellsW - 1) {
-        res.push(this.findCell(edge[0].x + 1, edge[0].y));
-      }
-
-      // Horizontal edge:
-    } else if (edge[0].y == edge[1].y) {
-      if (edge[0].y != 0) {
-        res.push(this.findCell(edge[0].x, edge[0].y - 1));
-      }
-      if (edge[1].y != this.numCellsH - 1) {
-        res.push(this.findCell(edge[0].x, edge[0].y + 1));
-      }
-    }
-
-    return res;
-  };
+  // this.getNeighborsOfEdge = function(edge) {
+  //   let res = [];
+  //
+  //   // Vertical edge:
+  //   if (edge[0].x == edge[1].x) { // edge[0] is starting vertex, edge[1] is ending vertex.
+  //     if (edge[0].x != 0) {
+  //       res.push(this.findCell(edge[0].x - 1, edge[0].y));
+  //     }
+  //     if (edge[1].x != this.numCellsW - 1) {
+  //       res.push(this.findCell(edge[0].x + 1, edge[0].y));
+  //     }
+  //
+  //     // Horizontal edge:
+  //   } else if (edge[0].y == edge[1].y) {
+  //     if (edge[0].y != 0) {
+  //       res.push(this.findCell(edge[0].x, edge[0].y - 1));
+  //     }
+  //     if (edge[1].y != this.numCellsH - 1) {
+  //       res.push(this.findCell(edge[0].x, edge[0].y + 1));
+  //     }
+  //   }
+  //
+  //   return res;
+  // };
 
   // ===============================================================================================
 
@@ -229,34 +229,34 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
   // ===============================================================================================
-
-  // NOTE: there is a bug here. If two sentries border a field that grows one, player's count will go up by 2.
-
-  this.getNextHarvest = function() {
-    this.nextHarvest = {
-      player1: {
-        "iron": 0,
-        "stone": 0,
-        "gem": 0
-      },
-      player2: {
-        "iron": 0,
-        "stone": 0,
-        "gem": 0
-      }
-    };
-
-    this.cells.forEach(cell => {
-      if (cell.owner == 'P1') {
-        this.nextHarvest.player1[cell.resource] += cell.numOccEdges;
-      }
-      if (cell.owner == 'P2') {
-        this.nextHarvest.player2[cell.resource] += cell.numOccEdges;
-      }
-    });
-
-    // console.log(this.nextHarvest);
-  };
+  //
+  // // NOTE: there is a bug here. If two sentries border a field that grows one, player's count will go up by 2.
+  //
+  // this.getNextHarvest = function() {
+  //   this.nextHarvest = {
+  //     player1: {
+  //       "iron": 0,
+  //       "stone": 0,
+  //       "gem": 0
+  //     },
+  //     player2: {
+  //       "iron": 0,
+  //       "stone": 0,
+  //       "gem": 0
+  //     }
+  //   };
+  //
+  //   this.cells.forEach(cell => {
+  //     if (cell.owner == 'P1') {
+  //       this.nextHarvest.player1[cell.resource] += cell.numOccEdges;
+  //     }
+  //     if (cell.owner == 'P2') {
+  //       this.nextHarvest.player2[cell.resource] += cell.numOccEdges;
+  //     }
+  //   });
+  //
+  //   // console.log(this.nextHarvest);
+  // };
 
   // ===============================================================================================
 

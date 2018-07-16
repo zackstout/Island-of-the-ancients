@@ -27,7 +27,7 @@ socket.on('ids', function(ids) {
 
 // Receive invite:
 socket.on('msg', function(inv) {
-  console.log(inv);
+  // console.log(inv);
   $('#log').append(inv + ' would like to play a game with you!');
   var play = '<button class="play" data-from="' + inv + '" data-to="' + socket.id + '">Play</button>';
   $('#log').append(play);
@@ -72,6 +72,7 @@ socket.on('startGame', function(game) {
     // Is it your move?
     const move_or_wait_html = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
     $('.moveOrWait').html(move_or_wait_html);
+
     const bank_html = `
       Iron: ${grid.player.bank.iron} <br/>
       Stone: ${grid.player.bank.stone}
@@ -87,7 +88,7 @@ socket.on('startGame', function(game) {
 
 // Prepare screen for a player's new move; called right after other user has moved and server has computed:
 socket.on('submitMove', gameState => {
-  console.log(gameState);
+  console.log(gameState, socket);
   const verts = gameState.boardState.occupied_vertices;
   const edges = gameState.boardState.occupied_edges;
   grid.occ_vertices = verts;
@@ -98,6 +99,7 @@ socket.on('submitMove', gameState => {
     console.log('well hello there mover');
     $('#island').on('click', {grid: grid}, grid.handleClick);
   } else {
+    // No one will see this -- because it always emits to the next mover!!!
     console.log('you are not the mover!');
     $('#island').off('click');
   }

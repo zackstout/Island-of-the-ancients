@@ -25,7 +25,7 @@ export function startClickListeners() {
       p1 = $(ev.currentTarget).data('from');
     }
 
-    console.log(p1, p2, socket.id);
+    // console.log(p1, p2, socket.id);
 
     socket.emit('startGame', {
       p1: p1,
