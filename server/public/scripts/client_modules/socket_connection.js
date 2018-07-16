@@ -51,12 +51,9 @@ socket.on('startGame', function(game) {
     grid.occ_edges = occ_edges;
 
     console.log(game, grid);
-
     window.grid = grid;
-
     // Draw the grid:
     grid.drawGrid(occ_vertices, occ_edges);
-
     // Add event listeners:
     $('#island').on('click', {grid: grid}, grid.handleClick);
 

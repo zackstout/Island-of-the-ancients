@@ -34,6 +34,7 @@ export function startClickListeners() {
   });
 
   // ===============================================================================================
+
   $('body').on('click', '.subMove', ev => {
     console.log(grid);
     const gameId = grid.player.num == 1 ? grid.player.id + grid.enemy.id : grid.enemy.id + grid.player.id; // bad for security but whatever
@@ -45,6 +46,8 @@ export function startClickListeners() {
   });
 
   // ===============================================================================================
+
+
 
   // ===============================================================================================
 

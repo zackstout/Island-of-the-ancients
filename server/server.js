@@ -5,24 +5,18 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const PORT = 5000;
 const _ = require('lodash');
-
-const BUILD_COSTS = {
-  sentry: {
-    iron: 2,
-    stone: 2
-  },
-  connector: {
-    iron: 3,
-    stone: 4
-  }
-};
+const helpers = require('./modules/helper_functions.js');
+const computeCosts = helpers.computeCosts;
+const computeGains = helpers.computeGains;
+const getDifferenceVertices = helpers.getDifferenceVertices;
+const getDifferenceEdges = helpers.getDifferenceEdges;
 
 let allUsers = [];
 let games = [];
 
 const Game = require('./modules/Game.js');
 
-// function
+// ===============================================================================================
 
 io.on('connection', socket => {
   console.log(`Client id ${socket.id} connected.`);
@@ -42,48 +36,10 @@ io.on('connection', socket => {
     io.emit('startGame', game); // Should this be called same thing? Guess it doesn't matter.
   });
 
-
   // ===============================================================================================
 
-  // Relies on arr1 being a subset of arr2:
-  function getDifferenceVertices(sub_arr, arr) {
-    let res = [];
-    arr.forEach(v1 => {
-      let contained = false;
-      sub_arr.forEach(v2 => {
-        if (v1.x == v2.x && v1.y == v2.y) {
-          contained = true;
-        }
-      });
-      if (!contained) {
-        res.push(v1);
-      }
-    });
-    return res;
-  }
-
-  // Relies on arr1 being a subset of arr2:
-  function getDifferenceEdges(sub_arr, arr) {
-    let res = [];
-    arr.forEach(e1 => {
-      let contained = false;
-      sub_arr.forEach(e2 => {
-        if (e1[0].x == e2[0].x && e1[0].y == e2[0].y && e1[1].x == e2[1].x && e1[1].y == e2[1].y) {
-          contained = true;
-        }
-      });
-      if (!contained) {
-        res.push(e1);
-      }
-    });
-    return res;
-  }
-
-  // The problem is that this is only BROADCASTING: so it doesn't update the player who just clicked's board.
-  // It's starting to feel like what we want is to just emit the Move itself from the Client, rather than the whole enchilada.
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
-
     const new_verts = getDifferenceVertices(game.boardState.occupied_vertices, data.vertices);
     const new_edges = getDifferenceEdges(game.boardState.occupied_edges, data.edges);
     // console.log("NEW STUFF: ", new_verts, new_edges);
@@ -91,40 +47,39 @@ io.on('connection', socket => {
     game.historyOfMoves.push({
       move_number: game.moveNumber,
       mover: socket.id,
-      // It seems possible that this is one of those situations where it's grabbing the object's later-updated value here.... (??)
       verts_placed: new_verts,
       edges_placed: new_edges
     });
 
-    // NOTE: Next step would be to subtract from their resources to pay expenses.
-
     game.boardState.occupied_vertices = data.vertices;
     game.boardState.occupied_edges = data.edges;
-
     game.moveNumber ++;
 
     // Swap mover:
     if (game.mover == game.player1) game.mover = game.player2;
     else game.mover = game.player1;
 
-    // Deduct costs for proper player:
+    // Deduct COSTS for proper player and add RESOURCES for next player before the turn is passed back to them:
+    // Surely a cleaner way to write with variable property:
     if (socket.id == game.player1.id) {
       game.player1.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player1.bank.stone -= computeCosts(new_verts, new_edges).stone;
+      game.player2.bank.iron += computeGains(data.vertices, data.edges, game.boardState.cells, game.player2).iron;
+      game.player2.bank.stone += computeGains(data.vertices, data.edges, game.boardState.cells, game.player2).stone;
     } else {
       game.player2.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player2.bank.stone -= computeCosts(new_verts, new_edges).stone;
+      game.player1.bank.iron += computeGains(data.vertices, data.edges, game.boardState.cells, game.player1).iron;
+      game.player1.bank.stone += computeGains(data.vertices, data.edges, game.boardState.cells, game.player1).stone;
     }
 
-    // Ugly:
+    // Ugly way of determining player's enemy:
     let enemyId;
     if (data.gameId.indexOf(socket.id) == 0) {
       enemyId = data.gameId.substring(socket.id.length);
     } else {
       enemyId = data.gameId.substring(0, data.gameId.indexOf(socket.id));
     }
-    // console.log(game);
-
 
     // Communicate with enemy player and player who just moved:
     socket.broadcast.to(enemyId).emit('submitMove', game);
@@ -157,27 +112,6 @@ io.on('connection', socket => {
 
 
 // ===============================================================================================
-
-// Helper function for submitMove:
-function computeCosts(verts, edges) {
-  let res = {
-    iron: 0,
-    stone: 0
-  };
-
-  res.iron += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.iron, 0);
-  res.iron += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.iron, 0);
-  res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
-  res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
-
-  // Why is this getting bigger every time.....? Oh probably because data.vertices is! Duh!
-  // Hmm.... calling twice....
-  console.log("RESULT of REDUCING is...", res);
-  return res;
-}
-
-
-
 
 
 app.use(express.static('server/public'));
