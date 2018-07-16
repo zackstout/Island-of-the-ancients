@@ -37,7 +37,9 @@ socket.on('msg', function(inv) {
 
 // Draw both grids:
 socket.on('startGame', function(game) {
+  // But only if the player is part of the game! Surely a cleaner way.
   if (socket.id == game.player1.id || socket.id == game.player2.id) {
+
     const grid = new Grid(CANVAS_WIDTH, CANVAS_HEIGHT, game.numCellsW, game.numCellsH);
     grid.player = socket.id == game.player1.id ? game.player1 : game.player2;
     grid.enemy = socket.id == game.player1.id ? game.player2 : game.player1;
@@ -62,20 +64,28 @@ socket.on('startGame', function(game) {
     // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
 
     // Nice -- only listen on active player's clicks:
-    if (socket.id == game.player2.id) {
+    // Hmm why doesn't it work in submitMove?
+    if (grid.player == game.player2) {
       $('#island').off('click');
     }
 
     // Is it your move?
-    const html_out = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
-    $('.moveOrWait').html(html_out);
+    const move_or_wait_html = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
+    $('.moveOrWait').html(move_or_wait_html);
+    const bank_html = `
+      Iron: ${grid.player.bank.iron} <br/>
+      Stone: ${grid.player.bank.stone}
+    `;
+    // Why isn't this working....
+    $('.bank_account').html(bank_html);
+
   }
 
 });
 
 // ===============================================================================================
 
-// Prepare screen for a player's new move:
+// Prepare screen for a player's new move; called right after other user has moved and server has computed:
 socket.on('submitMove', gameState => {
   console.log(gameState);
   const verts = gameState.boardState.occupied_vertices;
@@ -85,8 +95,10 @@ socket.on('submitMove', gameState => {
   grid.drawGrid(verts, edges);
 
   if (gameState.mover.id == socket.id) {
+    console.log('well hello there mover');
     $('#island').on('click', {grid: grid}, grid.handleClick);
   } else {
+    console.log('you are not the mover!');
     $('#island').off('click');
   }
 

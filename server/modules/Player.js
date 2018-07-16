@@ -1,6 +1,4 @@
 
-const resources_arr = [10, 10];
-
 function Player(id, resources_arr, num) {
   this.id = id;
   this.num = num;

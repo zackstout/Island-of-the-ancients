@@ -2,7 +2,7 @@
 // It's clearly not going to work to make grid a global var:
 let height, width, ctx, grid;
 
-import { startClickListeners } from './client_modules/click_events.js';
+import { startClickListeners } from './client_modules/click_handlers.js';
 import { socket } from './client_modules/socket_connection.js';
 
 // ===============================================================================================

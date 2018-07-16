@@ -6,11 +6,23 @@ const io = require('socket.io')(http);
 const PORT = 5000;
 const _ = require('lodash');
 
+const BUILD_COSTS = {
+  sentry: {
+    iron: 2,
+    stone: 2
+  },
+  connector: {
+    iron: 3,
+    stone: 4
+  }
+};
+
 let allUsers = [];
 let games = [];
 
 const Game = require('./modules/Game.js');
 
+// function
 
 io.on('connection', socket => {
   console.log(`Client id ${socket.id} connected.`);
@@ -34,22 +46,22 @@ io.on('connection', socket => {
 
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
-    // console.log(enemyId, "and then", data.gameId.substring(0, data.gameId.indexOf(enemyId)), "yup");
 
-    // NOTE: This is wrong: we only want to add to verts_placed what WASN'T on vertices before. So... _.diff?
     game.historyOfMoves.push({
       move_number: game.moveNumber,
       mover: socket.id,
-      verts_placed: data.vertices,
-      edges_placed: data.edges
+      verts_placed: _.difference(game.boardState.occupied_vertices, data.vertices),
+      edges_placed: _.difference(game.boardState.occupied_edges, data.edges)
     });
-    // NOTE: Don't forget to swap game.mover
+
     // NOTE: Next step would be to subtract from their resources to pay expenses.
 
-    game.boardState.occupied_vertices = game.boardState.occupied_vertices.concat(data.vertices);
-    game.boardState.occupied_edges = game.boardState.occupied_edges.concat(data.edges);
+    game.boardState.occupied_vertices = data.vertices;
+    game.boardState.occupied_edges = data.edges;
+
     game.moveNumber ++;
 
+    // Swap mover:
     if (game.mover == game.player1) game.mover = game.player2;
     else game.mover = game.player1;
 
@@ -60,6 +72,7 @@ io.on('connection', socket => {
     } else {
       enemyId = data.gameId.substring(0, data.gameId.indexOf(socket.id));
     }
+    console.log(game);
     socket.broadcast.to(enemyId).emit('submitMove', game);
   });
 
