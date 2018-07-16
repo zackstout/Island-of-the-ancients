@@ -35,16 +35,15 @@ export function drawOccupiedEdges(edges, grid) {
 
 // ===============================================================================================
 
-export function drawNumOccupiedEdgesPerCell(grid) {
-  grid.getOccupiedEdgesOfEachCell(grid.occ_edges);
+export function drawEachCellsResourceGeneration(grid) {
+  // "get" seems inappropriate: really we're telling it to update the Grid's state...
+  grid.getEachCellsResourceValue(grid.occ_edges);
   grid.getEachCellsOwner(grid.occ_vertices);
   grid.getNextHarvest();
 
   grid.cells.forEach(cell => {
     const text_x = cell.x * grid.cell_width + grid.cell_width/2;
     const text_y = cell.y * grid.cell_height + grid.cell_height/2;
-
-    // console.log(cell.resource);
 
     if (cell.owner == 'P1') {
       ctx.fillStyle = 'red';

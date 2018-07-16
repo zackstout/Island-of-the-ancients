@@ -3,7 +3,7 @@ const resources = ["iron", "stone"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
 import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../functions.js';
-import { drawOccupiedVertices, drawOccupiedEdges, drawNumOccupiedEdgesPerCell } from './drawing.js';
+import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration } from './drawing.js';
 
 export function Grid(w, h, numCellsW, numCellsH) {
   this.numCellsH = numCellsH;
@@ -31,7 +31,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
       cell_y -= 1;
     }
     const cell = this.findCell(cell_x, cell_y);
-    console.log(cell);
+    // console.log(cell);
 
     return cell;
   };
@@ -40,11 +40,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   this.drawBoardFeature = bf => {
     if (bf.feature != 'cell') {
-      this.drawGrid(this.occ_vertices, this.occ_edges);
-    } else {
-      console.log(bf);
-
     }
+    this.drawGrid(this.occ_vertices, this.occ_edges);
 
     const w = this.cell_width;
     const h = this.cell_height;
@@ -167,7 +164,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // ===============================================================================================
 
-  this.getOccupiedEdgesOfEachCell = function(occupied_edges) {
+  this.getEachCellsResourceValue = function(occupied_edges) {
     this.cells.forEach(cell => {
       cell.numOccEdges = 0;
       const edges = computeEdges(cell);
@@ -183,7 +180,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     });
   };
 
-
+  // Helper function for above method (getEachCellsResourceValue):
   function checkForNexus(cell, nex) {
     const verts = computeVertices(cell);
     for (let i=0; i < verts.length; i++) {
@@ -258,7 +255,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
       }
     });
 
-    console.log(this.nextHarvest);
+    // console.log(this.nextHarvest);
   };
 
   // ===============================================================================================
@@ -267,19 +264,33 @@ export function Grid(w, h, numCellsW, numCellsH) {
     const mouse = {x: e.offsetX, y: e.offsetY};
     const grid = e.data.grid;
 
-    console.log(grid.detectBoardFeature(mouse));
+    // console.log(grid.detectBoardFeature(mouse));
     grid.drawBoardFeature(grid.detectBoardFeature(mouse));
   };
 
   // ===============================================================================================
 
+  // Only assumed to happen if player is Active (it's their turn):
   this.handleClick = function(e) {
     const mouse = {x: e.offsetX, y: e.offsetY};
     const grid = e.data.grid;
     const cell = grid.getClickedCell(mouse);
     grid.distanceToEdges(cell, mouse);
+
+    // Now, let's draw a new piece there:
+    // console.log(grid.detectBoardFeature(mouse));
+    const feature = grid.detectBoardFeature(mouse);
+    if (feature.feature == 'edge') {
+      grid.occ_edges.push(feature.location);
+    }
+    if (feature.feature == 'vertex') {
+      grid.occ_vertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
+    }
+    grid.drawBoardFeature(feature);
+    console.log(grid);
   };
 
+  // ===============================================================================================
 
   this.drawGrid = function(occupied_vertices=[], occupied_edges=[]) {
     this.cells.forEach(cell => {
@@ -295,7 +306,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     // Pretty ugly to pass around grid like this...
     drawOccupiedEdges(occupied_edges, this);
     drawOccupiedVertices(occupied_vertices, this);
-    drawNumOccupiedEdgesPerCell(this); // WE're overloading this function
+    drawEachCellsResourceGeneration(this); // WE're overloading this function
   };
 
   // ===============================================================================================

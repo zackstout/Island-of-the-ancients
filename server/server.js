@@ -4,6 +4,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const PORT = 5000;
+const _ = require('lodash');
 
 let allUsers = [];
 let games = [];
@@ -31,6 +32,33 @@ io.on('connection', socket => {
 
   // ===============================================================================================
 
+  socket.on('submitMove', data => {
+    const game = _.find(games, {id: data.gameId});
+    // console.log(enemyId, "and then", data.gameId.substring(0, data.gameId.indexOf(enemyId)), "yup");
+
+    // NOTE: This is wrong: we only want to add to verts_placed what WASN'T on vertices before. So... _.diff?
+    game.historyOfMoves.push({
+      move_number: game.moveNumber,
+      mover: socket.id,
+      verts_placed: data.vertices,
+      edges_placed: data.edges
+    });
+    // NOTE: Don't forget to swap game.mover
+    // NOTE: Next step would be to subtract from their resources to pay expenses.
+
+    game.boardState.occupied_vertices = game.boardState.occupied_vertices.concat(data.vertices);
+    game.boardState.occupied_edges = game.boardState.occupied_edges.concat(data.edges);
+    game.moveNumber ++;
+
+    // Ugly:
+    let enemyId;
+    if (data.gameId.indexOf(socket.id) == 0) {
+      enemyId = data.gameId.substring(socket.id.length);
+    } else {
+      enemyId = data.gameId.substring(0, data.gameId.indexOf(socket.id));
+    }
+    socket.broadcast.to(enemyId).emit('submitMove', game);
+  });
 
   // ===============================================================================================
 

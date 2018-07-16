@@ -48,12 +48,21 @@ socket.on('startGame', function(game) {
 
     console.log(game, grid);
 
+    window.grid = grid;
+
     // Draw the grid:
     grid.drawGrid(occ_vertices, occ_edges);
 
     // Add event listeners:
     $('#island').on('click', {grid: grid}, grid.handleClick);
+
+    // Why so buggy??
     // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
+
+    // Nice -- only listen on active player's clicks:
+    if (socket.id == game.player2.id) {
+      $('#island').off('click');
+    }
 
     // Is it your move?
     const html_out = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
@@ -63,7 +72,9 @@ socket.on('startGame', function(game) {
 });
 
 // ===============================================================================================
-
+socket.on('submitMove', gameState => {
+  console.log(gameState);
+});
 
 // ===============================================================================================
 

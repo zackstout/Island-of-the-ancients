@@ -4,10 +4,12 @@ const resources = ['iron', 'stone'];
 
 // Takes in two user Ids and creates a new Game:
 function Game(p1, p2, w, h) {
-  this.player1 = new Player(p1, [0, 0]);
-  this.player2 = new Player(p2, [0, 0]);
+  this.player1 = new Player(p1, [0, 0], 1);
+  this.player2 = new Player(p2, [0, 0], 2);
   this.numCellsW = w;
   this.numCellsH = h;
+  this.id = this.player1.id + this.player2.id;
+  this.moveNumber = 0;
 
   this.mover = this.player1;
   this.historyOfMoves = [];
