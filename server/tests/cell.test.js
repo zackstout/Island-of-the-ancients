@@ -1,5 +1,5 @@
 
-import { Cell } from '../public/scripts/Cell.js';
+import { Cell } from '../public/scripts/client_modules/Cell.js';
 
 var assert = require('assert');
 

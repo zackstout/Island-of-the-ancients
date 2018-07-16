@@ -1,6 +1,6 @@
 import {
   Grid
-} from '../public/scripts/Grid.js';
+} from '../public/scripts/client_modules/Grid.js';
 
 
 
@@ -24,4 +24,4 @@ describe("selectedFeature(cell,edgeDistances)", function () {
       location: [ {x: 1, y: 1}, { x: 2, y: 1 } ]
     });
   });
-})
+});

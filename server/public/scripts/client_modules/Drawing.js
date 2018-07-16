@@ -3,7 +3,7 @@
 // should be a method of the grid:
 
 export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
-  let ctx = window.ctx;
+  // let ctx = window.ctx;
 
   grid.cells.forEach(cell => {
     let col;
@@ -19,7 +19,7 @@ export function drawGrid(grid, occupied_vertices=[], occupied_edges=[]) {
   // Pretty ugly to pass around grid like this...
   drawOccupiedEdges(occupied_edges, grid);
   drawOccupiedVertices(occupied_vertices, grid);
-  drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
+  // drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
 }
 
 // ===============================================================================================

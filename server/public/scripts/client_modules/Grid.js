@@ -1,18 +1,21 @@
-
 const resources = ["stone", "iron", "gem"];
+const FEATURE_DETECTION_THRESHOLD = 10;
 
-const Cell = require('./Cell.js');
-const edgeInArray = require('./Test.js').edgeInArray;
-const vertexInArray = require('./Test.js').vertexInArray;
-const getDistance = require('./Vertex.js');
+import { Cell } from './Cell.js';
+import { edgeInArray, vertexInArray } from './Test.js';
+import { drawGrid } from './Drawing.js';
+import { getDistance } from './Vertex.js';
 
-function Grid(h, w, numCellsH, numCellsW) {
+
+export function Grid(h, w, numCellsH, numCellsW) {
   this.numCellsH = numCellsH;
   this.numCellsW = numCellsW;
   this.cell_height = h / numCellsH;
   this.cell_width = w / numCellsW;
 
   this.cells = [];
+
+
 
   // ===============================================================================================
 
@@ -41,10 +44,44 @@ function Grid(h, w, numCellsH, numCellsW) {
   // ===============================================================================================
 
   this.getClickedCell = function(point) {
-    const cell_x = Math.floor(point.x / this.cell_width);
-    const cell_y = Math.floor(point.y / this.cell_height);
+    let cell_x = Math.floor(point.x / this.cell_width);
+    let cell_y = Math.floor(point.y / this.cell_height);
+    if (cell_x === numCellsW){
+      cell_x -= 1;
+    }
+    if (cell_y === numCellsH) {
+      cell_y -= 1;
+    }
     const cell = this.findCell(cell_x, cell_y);
     return cell;
+  };
+
+  // ===============================================================================================
+
+  this.drawBoardFeature = bf => {
+    if (bf.feature != 'cell') {
+      drawGrid(this, test_vertices, test_edges);
+    }
+
+    const w = this.cell_width;
+    const h = this.cell_height;
+
+    if (bf.feature == 'edge') {
+      console.log(bf);
+      ctx.beginPath();
+      ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
+      ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = 'green';
+      ctx.stroke();
+    }
+
+    if (bf.feature == 'vertex') {
+      ctx.fillStyle = 'green';
+      ctx.beginPath();
+      ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
+      ctx.fill();
+    }
   };
 
   // ===============================================================================================
@@ -52,36 +89,64 @@ function Grid(h, w, numCellsH, numCellsW) {
   this.detectBoardFeature = function(point) {
     const cell = this.getClickedCell(point);
     const edgeDistances = this.distanceToEdges(cell,point);
+    // console.log(edgeDistances);
     return this.selectedFeature(cell, edgeDistances);
   };
 
   // ===============================================================================================
 
-  this.distanceToEdges = function(cell, point) {
-      const w = this.cell_width;
-      const h = this.cell_height;
-
-      // Top, Right, Bottom, Left:
-      const top_distance    = point.y - cell.edges[0][0].y * h;
-      const right_distance  = cell.edges[1][0].x * w - point.x;
-      const bottom_distance = cell.edges[2][0].y * h - point.y;
-      const left_distance   = point.x - cell.edges[3][0].x * w;
-
-      // console.log([top_distance, right_distance, bottom_distance, left_distance]);
-      return [top_distance, right_distance, bottom_distance, left_distance];
-  };
+  this.distanceToEdges = function(cell,point){
+    return [
+      Math.abs(cell.edges[0][0].y * this.cell_height - point.y),
+      Math.abs(cell.edges[1][0].x * this.cell_width - point.x),
+      Math.abs(cell.edges[2][0].y * this.cell_height - point.y),
+      Math.abs(cell.edges[3][0].x * this.cell_width - point.x)
+    ];
+  }
 
   // ===============================================================================================
 
-  this.selectedFeature = function(cell, edgeDistances) {
-
-    /*
-    return {
-      feature: "vertex" / "edge" / "cell"
-      location: {x,y} / [{x,y},{x,y}] / {x,y}
+  this.selectedFeature = function(cell,edgeDistances) {
+    let result = {
+      feature: null,
+      location: null
+    };
+    const threshold = FEATURE_DETECTION_THRESHOLD;
+    let featureIndex = [];
+    edgeDistances.forEach((d,i) => {
+      if (d < threshold) {
+        featureIndex.push(i);
+      }
+    });
+    if (featureIndex.length === 2) {
+      result.feature = "vertex";
+      result.location = this.getCommonVertex(cell.edges[featureIndex[0]],cell.edges[featureIndex[1]]);
+    } else if (featureIndex.length === 1) {
+      result.feature = "edge";
+      result.location = cell.edges[featureIndex[0]];
+    } else {
+      result.feature = "cell";
+      result.location = {
+        x: cell.x,
+        y: cell.y
+      }
     }
-    */
-  };
+    return result;
+  }
+
+  // ===============================================================================================
+  // find a way to do this where it stops immediately if it finds the correct vertex. I guess could use regular for loops.
+  this.getCommonVertex = function(edge1,edge2) {
+    let result = null;
+    edge1.forEach(vertex1 => {
+      edge2.forEach(vertex2 => {
+        if (vertex1.x === vertex2.x && vertex1.y === vertex2.y) {
+          result = vertex1;
+        }
+      })
+    })
+    return result;
+  }
 
   // ===============================================================================================
 
@@ -262,6 +327,27 @@ function Grid(h, w, numCellsH, numCellsW) {
 
   // ===============================================================================================
 
+  this.handleMouseMove = function(e) {
+    const mouse = {x: e.offsetX, y: e.offsetY};
+    // console.log(grid.detectBoardFeature(mouse));
+    const grid = e.data.grid;
+    grid.drawBoardFeature(grid.detectBoardFeature(mouse));
+  };
+
+  // ===============================================================================================
+
+  this.handleClick = function(e) {
+      const mouse = {x: e.offsetX, y: e.offsetY};
+      // console.log(e.data.grid);
+      const grid = e.data.grid;
+      const cell = grid.getClickedCell(mouse);
+      grid.getNearestVertex(mouse);
+      grid.getNearestEdge(mouse);
+      grid.distanceToEdges(cell, mouse);
+  };
+
+  // ===============================================================================================
+
   // Grab the cell from the grid array at a given xy-position:
   this.findCell = function(x, y) {
     return this.cells[x * this.numCellsW + y];
@@ -271,5 +357,3 @@ function Grid(h, w, numCellsH, numCellsW) {
 
   this.generateCells();
 }
-
-module.exports = Grid;
