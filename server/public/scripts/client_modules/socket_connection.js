@@ -42,16 +42,15 @@ socket.on('startGame', function(game) {
     const occ_edges = game.boardState.occupied_edges;
     grid.occ_vertices = occ_vertices;
     grid.occ_edges = occ_edges;
-    
+
     console.log(game, grid);
 
     // Draw the grid:
     grid.drawGrid(occ_vertices, occ_edges);
 
-    // NOTE: this is still wrong: each action is executing twice....the old familiar problem:
     // Add event listeners:
     $('#island').on('click', {grid: grid}, grid.handleClick);
-    $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
+    // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
 
     // Is it your move?
     const html_out = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';

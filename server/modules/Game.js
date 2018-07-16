@@ -22,8 +22,10 @@ function Game(p1, p2, w, h) {
     }
     this.player1.nexus = {x: x1, y: y1};
     this.player2.nexus = {x: x2, y: y2};
-    this.boardState.occupied_vertices.push({x: x1, y: y1, occupant: 'P1'});
-    this.boardState.occupied_vertices.push({x: x2, y: y2, occupant: 'P2'});
+    this.boardState.occupied_vertices = [
+      {x: x1, y: y1, occupant: 'P1'},
+      {x: x2, y: y2, occupant: 'P2'}
+    ];
   };
 
   this.generateCells = function() {

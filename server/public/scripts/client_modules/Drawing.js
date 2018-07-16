@@ -36,8 +36,8 @@ export function drawOccupiedEdges(edges, grid) {
 // ===============================================================================================
 
 export function drawNumOccupiedEdgesPerCell(grid) {
-  grid.getOccupiedEdgesOfEachCell(window.test_edges);
-  grid.getEachCellsOwner(window.test_vertices);
+  grid.getOccupiedEdgesOfEachCell(grid.occ_edges);
+  grid.getEachCellsOwner(grid.occ_vertices);
   grid.getNextHarvest();
 
   grid.cells.forEach(cell => {

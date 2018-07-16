@@ -38,13 +38,15 @@ export function Grid(w, h, numCellsW, numCellsH) {
   this.drawBoardFeature = bf => {
     if (bf.feature != 'cell') {
       this.drawGrid(this.occ_vertices, this.occ_edges);
+    } else {
+      console.log(bf);
+
     }
 
     const w = this.cell_width;
     const h = this.cell_height;
 
     if (bf.feature == 'edge') {
-      console.log(bf);
       ctx.beginPath();
       ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
       ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
@@ -99,7 +101,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     });
 
     const edges = computeEdges(cell);
-    
+
     if (featureIndex.length === 2) {
       result.feature = "vertex";
       result.location = this.getCommonVertex(edges[featureIndex[0]], edges[featureIndex[1]]);
@@ -130,31 +132,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
     return result;
   };
 
-  // ===============================================================================================
-  //
-  // this.getNearestVertex = function (point) {
-  //   const cell = this.getClickedCell(point);
-  //
-  //   const cell_verts = computeVertices(cell);
-  //   const vertices = cell_verts.vertices.map(v => {
-  //     const res = {x: v.x * this.cell_width, y: v.y * this.cell_height};
-  //     return res;
-  //   });
-  //
-  //   let minDist = 1000;
-  //   let closestVertex = {};
-  //
-  //   vertices.forEach(v => {
-  //     const d = getDistance(point, v);
-  //     if (d < minDist) {
-  //       minDist = d;
-  //       closestVertex.x = Math.round(v.x / this.cell_width);
-  //       closestVertex.y = Math.round(v.y / this.cell_height);
-  //     }
-  //   });
-  //
-  //   return closestVertex;
-  // };
 
   // ===============================================================================================
 
@@ -190,7 +167,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
   this.getOccupiedEdgesOfEachCell = function(occupied_edges) {
     this.cells.forEach(cell => {
       cell.numOccEdges = 0;
-      cell.edges.forEach(edge => {
+      const edges = computeEdges(cell);
+      edges.forEach(edge => {
         if (edgeInArray(edge, occupied_edges)) {
           cell.numOccEdges ++;
         }
@@ -204,9 +182,10 @@ export function Grid(w, h, numCellsW, numCellsH) {
     this.cells.forEach(cell => {
       cell.numPlay1 = 0;
       cell.numPlay2 = 0;
+      const vertices = computeVertices(cell);
 
-      for (let i=0; i < cell.vertices.length; i++) {
-        const vtx = cell.vertices[i];
+      for (let i=0; i < vertices.length; i++) {
+        const vtx = vertices[i];
         // Not using vertexInArray because it doesn't return position or player.
         for (let j=0; j < occupied_vertices.length; j++) {
           const occ = occupied_vertices[j];
@@ -267,51 +246,30 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // ===============================================================================================
 
-  // Check whether two vertices are connected by a path of rods for a given configuration of rods:
-  this.areConnectedVertices = function(v1, v2, occupant_edges) {
-    // Let's use the fact that each of our edges has orientation either LR or UD.... Or perhaps not:
-    // Start at one vertex. Check for rods; if find one, follow it.
-    // Hmm. It would be faster to look through the edges of a vertex... No it wouldn't!
-
-    // Loop through all occupant_edges. See if any contain vertex. If they do, run again with new vertex.
-    // ISSUE: can't count the edge you just walked through -- otherwise you just walk back and forth!
-
-    // It's starting to feel like we'll need recursive backtracking...But maybe there's a simpler way.
-
-
-  };
-
-  // ===============================================================================================
-
   this.handleMouseMove = function(e) {
     const mouse = {x: e.offsetX, y: e.offsetY};
-    // console.log(grid.detectBoardFeature(mouse));
     const grid = e.data.grid;
+
+    console.log(grid.detectBoardFeature(mouse));
     grid.drawBoardFeature(grid.detectBoardFeature(mouse));
   };
 
   // ===============================================================================================
 
   this.handleClick = function(e) {
-      const mouse = {x: e.offsetX, y: e.offsetY};
-      // console.log(e.data.grid);
-      const grid = e.data.grid;
-      const cell = grid.getClickedCell(mouse);
-      // grid.getNearestVertex(mouse);
-      // grid.getNearestEdge(mouse);
-      grid.distanceToEdges(cell, mouse);
+    const mouse = {x: e.offsetX, y: e.offsetY};
+    const grid = e.data.grid;
+    const cell = grid.getClickedCell(mouse);
+    grid.distanceToEdges(cell, mouse);
   };
 
 
   this.drawGrid = function(occupied_vertices=[], occupied_edges=[]) {
-    // let ctx = window.ctx;
-
     this.cells.forEach(cell => {
       let col;
       switch(cell.resource) {
         case 'stone': col = 'gray'; break;
         case 'iron': col = 'brown'; break;
-        // case 'gem': col = 'plum'; break;
       }
       ctx.fillStyle = col;
       ctx.fillRect(cell.x * this.cell_width, cell.y * this.cell_height, this.cell_width, this.cell_height);
@@ -320,7 +278,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     // Pretty ugly to pass around grid like this...
     drawOccupiedEdges(occupied_edges, this);
     drawOccupiedVertices(occupied_vertices, this);
-    // drawNumOccupiedEdgesPerCell(grid); // WE're overloading this function
+    drawNumOccupiedEdgesPerCell(this); // WE're overloading this function
   };
 
   // ===============================================================================================
@@ -330,11 +288,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
     return this.cells[x * this.numCellsW + y];
   };
 
-  // ===============================================================================================
-
-
-  // No longer do we want to do this automatically...Or ever, on the client side.
-  // this.generateCells();
 }
 
 
