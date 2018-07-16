@@ -50,6 +50,9 @@ io.on('connection', socket => {
     game.boardState.occupied_edges = game.boardState.occupied_edges.concat(data.edges);
     game.moveNumber ++;
 
+    if (game.mover == game.player1) game.mover = game.player2;
+    else game.mover = game.player1;
+
     // Ugly:
     let enemyId;
     if (data.gameId.indexOf(socket.id) == 0) {

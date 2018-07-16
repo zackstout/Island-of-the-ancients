@@ -2,8 +2,8 @@
 const resources = ["iron", "stone"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
-import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../functions.js';
-import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration } from './drawing.js';
+import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../../functions.js';
+import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration } from '../drawing_helpers.js';
 
 export function Grid(w, h, numCellsW, numCellsH) {
   this.numCellsH = numCellsH;
