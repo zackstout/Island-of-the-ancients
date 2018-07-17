@@ -46,8 +46,6 @@ function computeGains(verts, edges, cells, player) {
 
   let resources_in_cells = getEachCellsResourceValue(edges, cells, player);
   let cell_owners = getEachCellsOwner(verts, cells);
-  console.log("CELL OWNERS: ", cell_owners);
-  console.log("RESOURCES IN CELLS : ", resources_in_cells);
 
   for (let i=0; i < cells.length; i++) {
     if (player.num == 1 && cell_owners[i] == 'P1') {
@@ -61,7 +59,6 @@ function computeGains(verts, edges, cells, player) {
   console.log("RESULT OF GAINS: ", res);
   return res;
 }
-
 
 // ===============================================================================================
 

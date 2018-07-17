@@ -1,8 +1,9 @@
 import {
   Grid
-} from '../public/scripts/client_modules/Grid.js';
+} from '../public/scripts/client_modules/classes/Grid.js';
 
 
+// This test is now failing because I changed the grid constructor *not* to generate its own array of cells on creation.
 
 var assert = require('assert');
 

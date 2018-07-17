@@ -58,7 +58,7 @@ io.on('connection', socket => {
     // Swap mover:
     if (game.mover == game.player1) game.mover = game.player2;
     else game.mover = game.player1;
-
+    
     // Deduct COSTS for proper player and add RESOURCES for next player before the turn is passed back to them:
     // Surely a cleaner way to write with variable property:
     if (socket.id == game.player1.id) {

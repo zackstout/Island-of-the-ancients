@@ -45,6 +45,8 @@ function edgeInArray(e, arr) {
   return false;
 }
 
+// ===============================================================================================
+
 module.exports = {
   edgeInArray: edgeInArray,
   vertexInArray: vertexInArray,

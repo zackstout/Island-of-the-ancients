@@ -90,31 +90,22 @@ socket.on('submitMove', gameState => {
   grid.occ_edges = edges;
   grid.drawGrid(verts, edges);
 
-  if (gameState.mover.id == socket.id) {
-    console.log('well hello there mover');
-    $('#island').on('click', {grid: grid}, grid.handleClick);
-  } else {
-    console.log('you are not the mover!');
-    $('#island').off('click');
-  }
-
   // Is it your move?
-  const html_out = socket.id == gameState.mover.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
+  let html_out;
+  if (gameState.mover.id == socket.id) {
+    $('#island').on('click', {grid: grid}, grid.handleClick);
+    html_out = '<button class="subMove">End Turn</button>';
+  } else {
+    $('#island').off('click');
+    html_out = 'Zzz....';
+  }
   $('.moveOrWait').html(html_out);
 
-  let bank_html;
-  if (gameState.player1.id == socket.id) {
-    bank_html = `
-      Iron: ${gameState.player1.bank.iron} <br/>
-      Stone: ${gameState.player1.bank.stone}
+  const player = gameState.player1.id == socket.id ? 'player1' : 'player2';
+  const bank_html = `
+      Iron: ${gameState[player].bank.iron} <br/>
+      Stone: ${gameState[player].bank.stone}
     `;
-  } else {
-    bank_html = `
-      Iron: ${gameState.player2.bank.iron} <br/>
-      Stone: ${gameState.player2.bank.stone}
-    `;
-  }
-
   $('.bank_account').html(bank_html);
 });
 

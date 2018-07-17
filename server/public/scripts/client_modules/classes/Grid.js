@@ -3,7 +3,7 @@ const resources = ["iron", "stone"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
 import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../../functions.js';
-import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration } from '../drawing_helpers.js';
+import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration, drawStagedEdges, drawStagedVertices } from '../drawing_helpers.js';
 
 export function Grid(w, h, numCellsW, numCellsH) {
   this.numCellsH = numCellsH;
@@ -37,31 +37,31 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
   // ===============================================================================================
-
-  this.drawBoardFeature = bf => {
-    if (bf.feature != 'cell') {
-    }
-    this.drawGrid(this.occ_vertices, this.occ_edges);
-
-    const w = this.cell_width;
-    const h = this.cell_height;
-
-    if (bf.feature == 'edge') {
-      ctx.beginPath();
-      ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
-      ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = 'green';
-      ctx.stroke();
-    }
-
-    if (bf.feature == 'vertex') {
-      ctx.fillStyle = 'green';
-      ctx.beginPath();
-      ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
-      ctx.fill();
-    }
-  };
+  //
+  // this.drawBoardFeature = bf => {
+  //   if (bf.feature != 'cell') {
+  //   }
+  //   this.drawGrid(this.occ_vertices, this.occ_edges);
+  //
+  //   const w = this.cell_width;
+  //   const h = this.cell_height;
+  //
+  //   if (bf.feature == 'edge') {
+  //     ctx.beginPath();
+  //     ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
+  //     ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
+  //     ctx.lineWidth = 5;
+  //     ctx.strokeStyle = 'green';
+  //     ctx.stroke();
+  //   }
+  //
+  //   if (bf.feature == 'vertex') {
+  //     ctx.fillStyle = 'green';
+  //     ctx.beginPath();
+  //     ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
+  //     ctx.fill();
+  //   }
+  // };
 
   // ===============================================================================================
 
@@ -133,35 +133,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
 
-  // ===============================================================================================
 
-  // NOTE: this is wrong for the literal edge cases, i think...:
-  // Get the 1 or 2 cells that border a given edge:
-  // this.getNeighborsOfEdge = function(edge) {
-  //   let res = [];
-  //
-  //   // Vertical edge:
-  //   if (edge[0].x == edge[1].x) { // edge[0] is starting vertex, edge[1] is ending vertex.
-  //     if (edge[0].x != 0) {
-  //       res.push(this.findCell(edge[0].x - 1, edge[0].y));
-  //     }
-  //     if (edge[1].x != this.numCellsW - 1) {
-  //       res.push(this.findCell(edge[0].x + 1, edge[0].y));
-  //     }
-  //
-  //     // Horizontal edge:
-  //   } else if (edge[0].y == edge[1].y) {
-  //     if (edge[0].y != 0) {
-  //       res.push(this.findCell(edge[0].x, edge[0].y - 1));
-  //     }
-  //     if (edge[1].y != this.numCellsH - 1) {
-  //       res.push(this.findCell(edge[0].x, edge[0].y + 1));
-  //     }
-  //   }
-  //
-  //   return res;
-  // };
-
+  // NOTE: The following three functions are now more-or-less duplicated on the server:
   // ===============================================================================================
 
   this.getEachCellsResourceValue = function(occupied_edges) {
@@ -229,36 +202,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
   // ===============================================================================================
-  //
-  // // NOTE: there is a bug here. If two sentries border a field that grows one, player's count will go up by 2.
-  //
-  // this.getNextHarvest = function() {
-  //   this.nextHarvest = {
-  //     player1: {
-  //       "iron": 0,
-  //       "stone": 0,
-  //       "gem": 0
-  //     },
-  //     player2: {
-  //       "iron": 0,
-  //       "stone": 0,
-  //       "gem": 0
-  //     }
-  //   };
-  //
-  //   this.cells.forEach(cell => {
-  //     if (cell.owner == 'P1') {
-  //       this.nextHarvest.player1[cell.resource] += cell.numOccEdges;
-  //     }
-  //     if (cell.owner == 'P2') {
-  //       this.nextHarvest.player2[cell.resource] += cell.numOccEdges;
-  //     }
-  //   });
-  //
-  //   // console.log(this.nextHarvest);
-  // };
-
-  // ===============================================================================================
 
   this.handleMouseMove = function(e) {
     const mouse = {x: e.offsetX, y: e.offsetY};
@@ -270,7 +213,11 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // ===============================================================================================
 
+  this.stagedVertices = [];
+  this.stagedEdges = [];
+
   // Only assumed to happen if player is Active (it's their turn):
+  // Note that the grid gets passed into this as context when applied to a click listener:
   this.handleClick = function(e) {
     const mouse = {x: e.offsetX, y: e.offsetY};
     const grid = e.data.grid;
@@ -278,21 +225,39 @@ export function Grid(w, h, numCellsW, numCellsH) {
     grid.distanceToEdges(cell, mouse);
 
     // Now, let's draw a new piece there:
-    // console.log(grid.detectBoardFeature(mouse));
     const feature = grid.detectBoardFeature(mouse);
-    if (feature.feature == 'edge') {
-      grid.occ_edges.push(feature.location);
+
+    if (vertexInArray(feature.location, grid.occ_vertices) || edgeInArray(feature.location, grid.occ_edges)) {
+      // We do nothing. It's occupado.
     }
-    if (feature.feature == 'vertex') {
-      grid.occ_vertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
+    // ELSE, check whether clicked on thing belongs to STAGED. If so, remove it. If not, add it, IF THE COST IS NOT PROHIBITIVE.
+    else {
+      if (feature.feature == 'edge') {
+        // We will only want to push it onto STAGED array... And then draw both that (in green) and the regular stuff every click.
+        // grid.occ_edges.push(feature.location);
+        grid.stagedEdges.push(feature.location);
+      }
+      if (feature.feature == 'vertex') {
+        // grid.occ_vertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
+        grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
+
+      }
+
+      // Splice the feature from the appropriate array of features to be added.
+
+
+
+      grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
+
     }
-    grid.drawBoardFeature(feature);
-    // console.log(grid);
+
+
+
   };
 
   // ===============================================================================================
 
-  this.drawGrid = function(occupied_vertices=[], occupied_edges=[]) {
+  this.drawGrid = function(occupied_vertices=[], occupied_edges=[], staged_vertices=[], staged_edges=[]) {
     this.cells.forEach(cell => {
       let col;
       switch(cell.resource) {
@@ -304,6 +269,9 @@ export function Grid(w, h, numCellsW, numCellsH) {
     });
 
     // Pretty ugly to pass around grid like this...
+    drawStagedVertices(staged_vertices, this);
+    drawStagedEdges(staged_edges, this);
+
     drawOccupiedEdges(occupied_edges, this);
     drawOccupiedVertices(occupied_vertices, this);
     drawEachCellsResourceGeneration(this); // WE're overloading this function
