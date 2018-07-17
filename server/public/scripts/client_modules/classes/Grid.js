@@ -262,9 +262,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
         }
       }
     }
-    
-    grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
 
+    grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
   };
 
   // ===============================================================================================

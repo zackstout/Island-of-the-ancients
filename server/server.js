@@ -38,6 +38,7 @@ io.on('connection', socket => {
 
   // ===============================================================================================
 
+  // Client is sending staged vertices, staged edges, and gameId, which are stored in "data":
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
     const new_verts = data.staged_vertices;
