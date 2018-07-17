@@ -39,8 +39,10 @@ export function startClickListeners() {
     console.log(grid);
     const gameId = grid.player.num == 1 ? grid.player.id + grid.enemy.id : grid.enemy.id + grid.player.id; // bad for security but whatever
     socket.emit('submitMove', {
-      edges: grid.occ_edges,
-      vertices: grid.occ_vertices,
+      staged_edges: grid.stagedEdges,
+      staged_vertices: grid.stagedVertices,
+      // edges: grid.occ_edges,
+      // vertices: grid.occ_vertices,
       gameId: gameId
     });
   });

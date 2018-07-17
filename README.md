@@ -19,6 +19,10 @@
 
 - NOTE: we shouldn't need any of the "tally up" logic on the client. Just send array of cells....with that data? Hmm, maybe not. It's weird because it  needs to be on the server, to calculate the economy stuff.
 
+- Don't add any economy logic on the client side, even just for updating DOM. just ping server and wait for computed result.
+
+- NOTE: server-side re-implementation of `_.difference` won't be relevant anymore. We're just going to submit the current move, which is stagedVertices + stagedEdges, to the server. That makes more sense.
+
 ## More Concrete Goals:
 - Write the algorithm to determine whether a rod is connected to a power source (i.e. if there exists a continuous path of rods back to a source.)
 - Find a player's resource income for a turn given a board state.
