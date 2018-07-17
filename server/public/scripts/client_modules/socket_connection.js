@@ -1,16 +1,24 @@
 
 export const socket = window.io('http://localhost:5000');
 import { Grid } from './classes/Grid.js';
+import { computeCosts } from '../functions.js';
 
 // These are magic numbers still:
 const CANVAS_HEIGHT = 400;
 const CANVAS_WIDTH = 400;
+
+let projected_iron = 0;
+let projected_stone = 0;
+let harvested_iron = 0;
+let harvested_stone = 0;
 
 // ===============================================================================================
 
 // Get list of all online users:
 socket.on('ids', function(ids) {
   console.log(ids, socket.id);
+  $('.economy').hide();
+
   $('#otherUsers').empty();
   $('#otherUsers').append('Other users online: <br><br>');
 
@@ -38,6 +46,8 @@ socket.on('msg', function(inv) {
 
 // Draw both grids:
 socket.on('startGame', function(game) {
+  $('.economy').show();
+
   // But only if the player is part of the game! Surely a cleaner way.
   if (socket.id == game.player1.id || socket.id == game.player2.id) {
 
@@ -70,14 +80,14 @@ socket.on('startGame', function(game) {
     const move_or_wait_html = socket.id == game.player1.id ? '<button class="subMove">End Turn</button>' : 'Zzz....';
     $('.moveOrWait').html(move_or_wait_html);
 
-    const bank_html = `
-      Iron: ${grid.player.bank.iron} <br/>
-      Stone: ${grid.player.bank.stone}
-    `;
-
-    $('.bank_account').html(bank_html);
+    // Update economy Dom:
+    $('.bankIron').html(`${grid.player.bank.iron}`);
+    $('.bankStone').html(`${grid.player.bank.stone}`);
+    $('.projectedIron').html(`${projected_iron}`);
+    $('.projectedStone').html(`${projected_stone}`);
+    $('.harvestIron').html(`${harvested_iron}`);
+    $('.harvestStone').html(`${harvested_stone}`);
   }
-
 });
 
 // ===============================================================================================
@@ -87,6 +97,10 @@ socket.on('submitMove', gameState => {
   console.log(gameState, socket);
   const verts = gameState.boardState.occupied_vertices;
   const edges = gameState.boardState.occupied_edges;
+
+  grid.stagedVertices = [];
+  grid.stagedEdges = [];
+
   grid.occ_vertices = verts;
   grid.occ_edges = edges;
   grid.drawGrid(verts, edges);
@@ -103,14 +117,19 @@ socket.on('submitMove', gameState => {
   $('.moveOrWait').html(html_out);
 
   const player = gameState.player1.id == socket.id ? 'player1' : 'player2';
-  const bank_html = `
-      Iron: ${gameState[player].bank.iron} <br/>
-      Stone: ${gameState[player].bank.stone}
-    `;
-  $('.bank_account').html(bank_html);
+
+  // Update economy Dom:
+  $('.bankIron').html(`${gameState[player].bank.iron}`);
+  $('.bankStone').html(`${gameState[player].bank.stone}`);
+  $('.projectedIron').html(`${projected_iron}`);
+  $('.projectedStone').html(`${projected_stone}`);
+  $('.harvestIron').html(`${harvested_iron}`);
+  $('.harvestStone').html(`${harvested_stone}`);
 });
 
 // ===============================================================================================
+
+
 
 
 // ===============================================================================================

@@ -14,26 +14,63 @@
   </head>
   <body style="margin:50px">
 
-    <div id="otherUsers">
-      Other users online:
+    <div class="row">
+      <div class="col-xs-7 board">
+        <div id="otherUsers">
+          Other users online:
+        </div>
+
+        <br/> <hr>
+
+        <div id="log">
+          Messages: <br/>
+        </div>
+
+        <br/>
+        <hr>
+
+        <canvas id="island" height="400" width="400"></canvas>
+
+        <div class="moveOrWait"></div>
+
+        <br/>
+      </div>
+
+      <!-- NOTE: Only show this if user is IN A GAME: -->
+      <div class="col-xs-5 economy">
+
+        <table>
+          <thead>
+            <th> - </th>
+            <th>Iron</th>
+            <th>Stone</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bank Account</td>
+              <td class="bankIron">1</td>
+              <td class="bankStone">1</td>
+            </tr>
+
+            <tr>
+              <td>Projected Costs</td>
+              <td class="projectedIron">1</td>
+              <td class="projectedStone">1</td>
+            </tr>
+
+            <tr>
+              <td>Last Harvest</td>
+              <td class="harvestIron">1</td>
+              <td class="harvestStone">1</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
     </div>
 
-    <br/> <hr>
 
-    <div id="log">
-      Messages: <br/>
-    </div>
-
-    <br/>
-    <hr>
-
-    <canvas id="island" height="400" width="400"></canvas>
-
-    <div class="moveOrWait"></div>
-
-    <br/>
-
-    <div class="bank_account"></div>
 
   </body>
 </html>

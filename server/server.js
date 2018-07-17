@@ -28,7 +28,7 @@ io.on('connection', socket => {
   socket.on('startGame', players => {
     const p1 = players.p1;
     const p2 = players.p2;
-    const game = new Game(p1, p2, 12, 12);
+    const game = new Game(p1, p2, 8, 8);
     games.push(game);
     // console.log(game);
 

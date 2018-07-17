@@ -1,1 +1,10 @@
 
+.economy {
+  padding: 40px;
+  margin-left: 50px;
+}
+
+.economy td {
+  padding: 27px;
+  text-align: center;
+}

@@ -9,7 +9,8 @@ import {
   computeVertices,
   computeEdges,
   findAndRemoveVertex,
-  findAndRemoveEdge
+  findAndRemoveEdge,
+  computeCosts,
 } from '../../functions.js';
 
 import {
@@ -19,6 +20,7 @@ import {
   drawStagedEdges,
   drawStagedVertices
 } from '../drawing_helpers.js';
+
 
 // ===============================================================================================
 
@@ -34,6 +36,16 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   this.player = '';
   this.enemy = '';
+
+  this.staged_cost = {
+    iron: 0,
+    stone: 0
+  };
+
+  // Hmm, when do we clear these out? Probably in client-handling of submitMove.
+  this.stagedVertices = [];
+  this.stagedEdges = [];
+
 
   // ===============================================================================================
 
@@ -228,10 +240,9 @@ export function Grid(w, h, numCellsW, numCellsH) {
     grid.drawBoardFeature(grid.detectBoardFeature(mouse));
   };
 
-  // ===============================================================================================
 
-  this.stagedVertices = [];
-  this.stagedEdges = [];
+
+  // ===============================================================================================
 
   // Only assumed to happen if player is Active (it's their turn):
   // Note that the grid gets passed into this as context when applied to a click listener:
@@ -248,7 +259,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     if (feature.feature == 'vertex') {
       if (!vertexInArray(feature.location, grid.occ_vertices)) {
         if (vertexInArray(feature.location, grid.stagedVertices)) {
-          findAndRemoveVertex(grid.stagedVertices, feature.location);
+          grid.stagedVertices = findAndRemoveVertex(grid.stagedVertices, feature.location);
         } else {
           grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
         }
@@ -262,6 +273,14 @@ export function Grid(w, h, numCellsW, numCellsH) {
         }
       }
     }
+
+    // and now... with edges and vertices.. update Staged cost:
+    grid.staged_cost.iron = computeCosts(grid.stagedVertices, grid.stagedEdges).iron;
+    grid.staged_cost.stone = computeCosts(grid.stagedVertices, grid.stagedEdges).stone;
+
+    $('.projectedIron').html(grid.staged_cost.iron);
+    $('.projectedStone').html(grid.staged_cost.stone);
+
 
     grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
   };

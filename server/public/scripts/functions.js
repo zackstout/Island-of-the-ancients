@@ -1,4 +1,17 @@
 
+const BUILD_COSTS = {
+  sentry: {
+    iron: 2,
+    stone: 2
+  },
+  connector: {
+    iron: 3,
+    stone: 4
+  }
+};
+
+// ===============================================================================================
+
 export function getDistance(a, b) {
   return Math.pow(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2), 0.5).toFixed(3);
 }
@@ -49,6 +62,8 @@ export function edgeInArray(e, arr) {
   return false;
 }
 
+
+// Helper functions for submitMove function:
 // ===============================================================================================
 
 // Relies on vtx existing in verts:
@@ -85,12 +100,22 @@ export function isVertex(feature) {
   return feature.x !== null;
 }
 
+// ===============================================================================================
+
+export function computeCosts(verts, edges=[]) {
+  let res = {
+    iron: 0,
+    stone: 0
+  };
+  res.iron += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.iron, 0);
+  res.iron += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.iron, 0);
+  res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
+  res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
+  return res;
+}
 
 
-
-
-
-
+// ===============================================================================================
 
 
 

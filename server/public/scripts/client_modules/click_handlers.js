@@ -41,8 +41,6 @@ export function startClickListeners() {
     socket.emit('submitMove', {
       staged_edges: grid.stagedEdges,
       staged_vertices: grid.stagedVertices,
-      // edges: grid.occ_edges,
-      // vertices: grid.occ_vertices,
       gameId: gameId
     });
   });
