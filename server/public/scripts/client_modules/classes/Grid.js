@@ -2,8 +2,25 @@
 const resources = ["iron", "stone"];
 const FEATURE_DETECTION_THRESHOLD = 10;
 
-import { edgeInArray, vertexInArray, getDistance, computeVertices, computeEdges } from '../../functions.js';
-import { drawOccupiedVertices, drawOccupiedEdges, drawEachCellsResourceGeneration, drawStagedEdges, drawStagedVertices } from '../drawing_helpers.js';
+import {
+  edgeInArray,
+  vertexInArray,
+  getDistance,
+  computeVertices,
+  computeEdges,
+  findAndRemoveVertex,
+  findAndRemoveEdge
+} from '../../functions.js';
+
+import {
+  drawOccupiedVertices,
+  drawOccupiedEdges,
+  drawEachCellsResourceGeneration,
+  drawStagedEdges,
+  drawStagedVertices
+} from '../drawing_helpers.js';
+
+// ===============================================================================================
 
 export function Grid(w, h, numCellsW, numCellsH) {
   this.numCellsH = numCellsH;
@@ -232,20 +249,24 @@ export function Grid(w, h, numCellsW, numCellsH) {
     }
     // ELSE, check whether clicked on thing belongs to STAGED. If so, remove it. If not, add it, IF THE COST IS NOT PROHIBITIVE.
     else {
-      if (feature.feature == 'edge') {
-        // We will only want to push it onto STAGED array... And then draw both that (in green) and the regular stuff every click.
-        // grid.occ_edges.push(feature.location);
-        grid.stagedEdges.push(feature.location);
-      }
+
+
       if (feature.feature == 'vertex') {
-        // grid.occ_vertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
-        grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: 'P' + grid.player.num});
+        // It's a vertex:
+        if (vertexInArray(feature.location, grid.stagedVertices)) {
+          findAndRemoveVertex(grid.stagedVertices, feature.location);
+        } else {
+          grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
+        }
 
+      } else {
+        // It's an edge:
+        if (edgeInArray(feature.location, grid.stagedEdges)) {
+          findAndRemoveEdge(grid.stagedEdges, feature.location);
+        } else {
+          grid.stagedEdges.push(feature.location);
+        }
       }
-
-      // Splice the feature from the appropriate array of features to be added.
-
-
 
       grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
 

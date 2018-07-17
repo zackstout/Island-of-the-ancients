@@ -13,6 +13,7 @@
 - Each cell has a resource-richness index.
 - Limit on how many actions to take per turn?
 
+- Most of the vertex/edge functionality comes in pairs, but could probably be comfortably collapsed into single functions.
 
 - Plenty of UI issues: it lets me place the same rod twice, lets me place over stuff that exists, etc edgeDistances
 

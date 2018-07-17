@@ -51,19 +51,39 @@ export function edgeInArray(e, arr) {
 
 // ===============================================================================================
 
+// Relies on vtx existing in verts:
 export function findAndRemoveVertex(verts, vtx) {
-
+  let ind;
+  for (let i=0; i<verts.length; i++) {
+    if (verts[i].x == vtx.x && verts[i].y == vtx.y) {
+      ind = i;
+    }
+  }
+  return verts.splice(ind, 1);
 }
 
 // ===============================================================================================
 
+// Relies on edge existing in edges:
 export function findAndRemoveEdge(edges, edge) {
-
+  let ind;
+  for (let i=0; i<edges.length; i++) {
+    if (edges[i][0].x == edge[0].x
+      && edges[i][0].y == edge[0].y
+      && edges[i][1].x == edge[1].x
+      && edges[i][1].y == edge[1].y) {
+      ind = i;
+    }
+  }
+  return edges.splice(ind, 1);
 }
 
 // ===============================================================================================
 
-
+// Not using for now -- feature.feature works fine:
+export function isVertex(feature) {
+  return feature.x !== null;
+}
 
 
 
