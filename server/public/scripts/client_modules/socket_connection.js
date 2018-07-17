@@ -7,11 +7,6 @@ import { computeCosts } from '../functions.js';
 const CANVAS_HEIGHT = 400;
 const CANVAS_WIDTH = 400;
 
-let projected_iron = 0;
-let projected_stone = 0;
-let harvested_iron = 0;
-let harvested_stone = 0;
-
 // ===============================================================================================
 
 // Get list of all online users:
@@ -85,10 +80,10 @@ socket.on('startGame', function(game) {
     // Update economy Dom:
     $('.bankIron').html(`${grid.player.bank.iron}`);
     $('.bankStone').html(`${grid.player.bank.stone}`);
-    $('.projectedIron').html(`${projected_iron}`);
-    $('.projectedStone').html(`${projected_stone}`);
-    $('.harvestIron').html(`${harvested_iron}`);
-    $('.harvestStone').html(`${harvested_stone}`);
+    $('.projectedIron').html(0);
+    $('.projectedStone').html(0);
+    $('.harvestIron').html(0);
+    $('.harvestStone').html(0);
   }
 });
 
@@ -129,8 +124,8 @@ socket.on('submitMove', gameState => {
   $('.bankStone').html(`${gameState[player].bank.stone}`);
 
   // this doesn't matter: is controlled by Grid.js:
-  $('.projectedIron').html(`${projected_iron}`);
-  $('.projectedStone').html(`${projected_stone}`);
+  // $('.projectedIron').html(`${projected_iron}`);
+  // $('.projectedStone').html(`${projected_stone}`);
 
   // this should prob also be controlled by Grid.js
   $('.harvestIron').html(`${gameState[player].tempBank.iron}`);

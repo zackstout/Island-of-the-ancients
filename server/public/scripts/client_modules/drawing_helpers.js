@@ -35,11 +35,23 @@ export function drawOccupiedEdges(edges, grid) {
 
 // ===============================================================================================
 
-export function drawEachCellsResourceGeneration(grid) {
-  // "get" seems inappropriate: really we're telling it to update the Grid's state...
-  grid.getEachCellsResourceValue(grid.occ_edges);
-  grid.getEachCellsOwner(grid.occ_vertices);
-  // grid.getNextHarvest();
+export function drawEachCellsResourceGeneration(grid, occ_edges=[], occ_verts=[]) {
+
+  // Ugly but will handle draw for first drawing, AND for on click.
+  if (occ_edges.length > 0) {
+    grid.getEachCellsResourceValue(occ_edges);
+    grid.getEachCellsOwner(occ_verts, grid.cells);
+  } else {
+    grid.getEachCellsResourceValue(grid.occ_edges);
+    grid.getEachCellsOwner(grid.occ_vertices, grid.cells);
+  }
+
+
+  // drawing on click is ALMOST working ... But now colors are broken...
+  // ODD.... the Projected Costs are not being cleared out anymore either ....
+
+
+  console.log(grid.cells);
 
   grid.cells.forEach(cell => {
     const text_x = cell.x * grid.cell_width + grid.cell_width/2;

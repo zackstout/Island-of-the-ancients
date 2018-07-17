@@ -166,7 +166,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
 
-
   // NOTE: The following three functions are now more-or-less duplicated on the server:
   // ===============================================================================================
 
@@ -198,8 +197,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // ===============================================================================================
 
-  this.getEachCellsOwner = function(occupied_vertices) {
-    this.cells.forEach(cell => {
+  this.getEachCellsOwner = function(occupied_vertices, cells=this.cells) {
+    cells.forEach(cell => {
       cell.numPlay1 = 0;
       cell.numPlay2 = 0;
       const vertices = computeVertices(cell);
@@ -230,7 +229,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
       } else {
         cell.owner = 'Neutral';
       }
-
     });
   };
 
@@ -260,7 +258,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     console.log(feature);
 
     // Hmmm....where do we get the player's current bank value?
-    
+
     // The UI logic for handling clicks -- if clicking on a staged element, remove it; otherwise, add it:
     // On the server, we will all stagedVertices and stagedEdges to the boardState.
     if (feature.feature == 'vertex') {
@@ -295,11 +293,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
 
     grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
-
-    // This won't quite work yet -- need to pass in staged stuff as well:
-    // grid.drawEachCellsResourceGeneration(grid);
-
-
   };
 
   // ===============================================================================================
@@ -315,6 +308,10 @@ export function Grid(w, h, numCellsW, numCellsH) {
       ctx.fillRect(cell.x * this.cell_width, cell.y * this.cell_height, this.cell_width, this.cell_height);
     });
 
+
+    const all_edges = occupied_edges.concat(staged_edges);
+    const all_verts = occupied_vertices.concat(staged_vertices);
+
     // Pretty ugly to pass around grid like this...
     drawStagedVertices(staged_vertices, this);
     drawStagedEdges(staged_edges, this);
@@ -322,7 +319,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
     drawOccupiedEdges(occupied_edges, this);
     drawOccupiedVertices(occupied_vertices, this);
 
-    drawEachCellsResourceGeneration(this); // WE're overloading this function
+    drawEachCellsResourceGeneration(this, all_edges, all_verts); // WE're overloading this function
   };
 
   // ===============================================================================================
