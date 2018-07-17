@@ -63,16 +63,36 @@ io.on('connection', socket => {
 
     // Deduct COSTS for proper player and add RESOURCES for next player before the turn is passed back to them:
     // Surely a cleaner way to write with variable property:
+    let res = {
+      iron: 0,
+      stone: 0,
+    };
+
     if (socket.id == game.player1.id) {
+      // Owner of grid is P1:
       game.player1.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player1.bank.stone -= computeCosts(new_verts, new_edges).stone;
-      game.player2.bank.iron += computeGains(new_verts, new_edges, game.boardState.cells, game.player2).iron;
-      game.player2.bank.stone += computeGains(new_verts, new_edges, game.boardState.cells, game.player2).stone;
+
+      res = computeGains(new_verts, new_edges, game.boardState.cells, game.player2);
+      game.player2.bank.iron += res.iron;
+      game.player2.bank.stone += res.stone;
+
+      // For lastHarvest on client side:
+      game.player2.tempBank.iron = res.iron;
+      game.player2.tempBank.stone = res.stone;
+
     } else {
+      // Owner of grid is P2:
       game.player2.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player2.bank.stone -= computeCosts(new_verts, new_edges).stone;
-      game.player1.bank.iron += computeGains(new_verts, new_edges, game.boardState.cells, game.player1).iron;
-      game.player1.bank.stone += computeGains(new_verts, new_edges, game.boardState.cells, game.player1).stone;
+
+      res = computeGains(new_verts, new_edges, game.boardState.cells, game.player1);
+      game.player1.bank.iron += res.iron;
+      game.player1.bank.stone += res.stone;
+
+      // For lastHarvest on client side:
+      game.player1.tempBank.iron = res.iron;
+      game.player1.tempBank.stone = res.stone;
     }
 
     // Ugly way of determining player's enemy:

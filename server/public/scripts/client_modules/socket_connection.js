@@ -121,8 +121,12 @@ socket.on('submitMove', gameState => {
   // Update economy Dom:
   $('.bankIron').html(`${gameState[player].bank.iron}`);
   $('.bankStone').html(`${gameState[player].bank.stone}`);
+
+  // this doesn't matter: turn it to 0: is controlled by Grid.js:
   $('.projectedIron').html(`${projected_iron}`);
   $('.projectedStone').html(`${projected_stone}`);
+
+  
   $('.harvestIron').html(`${harvested_iron}`);
   $('.harvestStone').html(`${harvested_stone}`);
 });

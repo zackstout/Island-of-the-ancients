@@ -252,10 +252,10 @@ export function Grid(w, h, numCellsW, numCellsH) {
     const cell = grid.getClickedCell(mouse);
     grid.distanceToEdges(cell, mouse);
 
-    // Now, let's draw a new piece there:
     const feature = grid.detectBoardFeature(mouse);
-    let drawThing = true;
 
+    // The UI logic for handling clicks -- if clicking on a staged element, remove it; otherwise, add it:
+    // On the server, we will all stagedVertices and stagedEdges to the boardState.
     if (feature.feature == 'vertex') {
       if (!vertexInArray(feature.location, grid.occ_vertices)) {
         if (vertexInArray(feature.location, grid.stagedVertices)) {
@@ -264,7 +264,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
           grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
         }
       }
-    } else if (feature.feature == 'edge') {
+    }
+    else if (feature.feature == 'edge') {
       if (!edgeInArray(feature.location, grid.occ_edges)) {
         if (edgeInArray(feature.location, grid.stagedEdges)) {
           findAndRemoveEdge(grid.stagedEdges, feature.location);
@@ -274,12 +275,14 @@ export function Grid(w, h, numCellsW, numCellsH) {
       }
     }
 
-    // and now... with edges and vertices.. update Staged cost:
+
+    // And now... with edges and vertices.. update Staged cost:
     grid.staged_cost.iron = computeCosts(grid.stagedVertices, grid.stagedEdges).iron;
     grid.staged_cost.stone = computeCosts(grid.stagedVertices, grid.stagedEdges).stone;
 
     $('.projectedIron').html(grid.staged_cost.iron);
     $('.projectedStone').html(grid.staged_cost.stone);
+
 
 
     grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);

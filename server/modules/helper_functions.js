@@ -48,6 +48,7 @@ function computeGains(verts, edges, cells, player) {
   let cell_owners = getEachCellsOwner(verts, cells);
 
   for (let i=0; i < cells.length; i++) {
+    // Yeah, could be written as one long condition, but feels ugly:
     if (player.num == 1 && cell_owners[i] == 'P1') {
       res[cells[i].resource] += resources_in_cells[i];
     }

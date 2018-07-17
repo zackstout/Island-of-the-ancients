@@ -7,6 +7,10 @@ function Player(id, resources_arr, num) {
     iron: resources_arr[0],
     stone: resources_arr[1]
   };
+  this.tempBank = {
+    iron: 0,
+    stone: 0,
+  };
 }
 
 module.exports = Player;
