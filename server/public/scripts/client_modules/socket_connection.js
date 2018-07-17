@@ -68,6 +68,8 @@ socket.on('startGame', function(game) {
     // Add event listeners:
     $('#island').on('click', {grid: grid}, grid.handleClick);
 
+    grid.current_bank.iron = game.player1.bank.iron;
+    grid.current_bank.stone = game.player1.bank.stone;
     // Why so buggy??
     // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
 
@@ -117,6 +119,10 @@ socket.on('submitMove', gameState => {
   $('.moveOrWait').html(html_out);
 
   const player = gameState.player1.id == socket.id ? 'player1' : 'player2';
+
+  // Attach to grid object so clicks can access it:
+  grid.current_bank.iron = gameState[player].bank.iron;
+  grid.current_bank.stone = gameState[player].bank.stone;
 
   // Update economy Dom:
   $('.bankIron').html(`${gameState[player].bank.iron}`);

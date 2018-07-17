@@ -43,7 +43,6 @@ export function computeEdges(cell) {
 
 export function vertexInArray(v, arr) {
   if (v.x == null) return null;
-
   for (let i=0; i < arr.length; i++) {
     if (arr[i].x == v.x && arr[i].y == v.y) return true;
   }
@@ -55,15 +54,12 @@ export function vertexInArray(v, arr) {
 // Note: this depends on convention (LRUD) being followed. Otherwise we may overlap.
 export function edgeInArray(e, arr) {
   if (e.length < 1) return false;
-
   for (let i=0; i < arr.length; i++) {
     if (arr[i][0].x == e[0].x && arr[i][0].y == e[0].y && arr[i][1].x == e[1].x && arr[i][1].y == e[1].y) return true;
   }
   return false;
 }
 
-
-// Helper functions for submitMove function:
 // ===============================================================================================
 
 // Relies on vtx existing in verts:
@@ -74,6 +70,7 @@ export function findAndRemoveVertex(verts, vtx) {
       ind = i;
     }
   }
+  // NOTE: splice mutates the input array, so there's no need to return. Should refactor:
   return verts.splice(ind, 1);
 }
 
@@ -83,21 +80,15 @@ export function findAndRemoveVertex(verts, vtx) {
 export function findAndRemoveEdge(edges, edge) {
   let ind;
   for (let i=0; i<edges.length; i++) {
-    if (edges[i][0].x == edge[0].x
-      && edges[i][0].y == edge[0].y
-      && edges[i][1].x == edge[1].x
-      && edges[i][1].y == edge[1].y) {
+    if (edges[i][0].x == edge[0].x &&
+        edges[i][0].y == edge[0].y &&
+        edges[i][1].x == edge[1].x &&
+        edges[i][1].y == edge[1].y) {
       ind = i;
     }
   }
+  // NOTE: splice mutates the input array, so there's no need to return. Should refactor:
   return edges.splice(ind, 1);
-}
-
-// ===============================================================================================
-
-// Not using for now -- feature.feature works fine:
-export function isVertex(feature) {
-  return feature.x !== null;
 }
 
 // ===============================================================================================
@@ -114,9 +105,17 @@ export function computeCosts(verts, edges=[]) {
   return res;
 }
 
-
 // ===============================================================================================
 
+export function canBuild(start, projected, type) {
+  const remaining_iron = start.iron - projected.iron;
+  const remaining_stone = start.stone - projected.stone;
+  const bool = remaining_iron > BUILD_COSTS[type].iron && remaining_stone > BUILD_COSTS[type].stone;
+  console.log(bool);
+  return bool;
+}
+
+// ===============================================================================================
 
 
 
