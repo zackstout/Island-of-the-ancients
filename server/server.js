@@ -43,7 +43,7 @@ io.on('connection', socket => {
     const game = _.find(games, {id: data.gameId});
     const new_verts = data.staged_vertices;
     const new_edges = data.staged_edges;
-    console.log("NEW STUFF: ", new_verts, new_edges);
+    // console.log("NEW STUFF: ", new_verts, new_edges);
 
     game.historyOfMoves.push({
       move_number: game.moveNumber,
@@ -73,7 +73,7 @@ io.on('connection', socket => {
       game.player1.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player1.bank.stone -= computeCosts(new_verts, new_edges).stone;
 
-      res = computeGains(new_verts, new_edges, game.boardState.cells, game.player2);
+      res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game.player2);
       game.player2.bank.iron += res.iron;
       game.player2.bank.stone += res.stone;
 
@@ -86,7 +86,7 @@ io.on('connection', socket => {
       game.player2.bank.iron -= computeCosts(new_verts, new_edges).iron;
       game.player2.bank.stone -= computeCosts(new_verts, new_edges).stone;
 
-      res = computeGains(new_verts, new_edges, game.boardState.cells, game.player1);
+      res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game.player1);
       game.player1.bank.iron += res.iron;
       game.player1.bank.stone += res.stone;
 

@@ -67,30 +67,30 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   // ===============================================================================================
   //
-  // this.drawBoardFeature = bf => {
-  //   if (bf.feature != 'cell') {
-  //   }
-  //   this.drawGrid(this.occ_vertices, this.occ_edges);
-  //
-  //   const w = this.cell_width;
-  //   const h = this.cell_height;
-  //
-  //   if (bf.feature == 'edge') {
-  //     ctx.beginPath();
-  //     ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
-  //     ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
-  //     ctx.lineWidth = 5;
-  //     ctx.strokeStyle = 'green';
-  //     ctx.stroke();
-  //   }
-  //
-  //   if (bf.feature == 'vertex') {
-  //     ctx.fillStyle = 'green';
-  //     ctx.beginPath();
-  //     ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
-  //     ctx.fill();
-  //   }
-  // };
+  this.drawBoardFeature = bf => {
+    if (bf.feature != 'cell') {
+    }
+    this.drawGrid(this.occ_vertices, this.occ_edges);
+
+    const w = this.cell_width;
+    const h = this.cell_height;
+
+    if (bf.feature == 'edge') {
+      ctx.beginPath();
+      ctx.moveTo(bf.location[0].x * w, bf.location[0].y * h);
+      ctx.lineTo(bf.location[1].x * w, bf.location[1].y * h);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = 'green';
+      ctx.stroke();
+    }
+
+    if (bf.feature == 'vertex') {
+      ctx.fillStyle = 'green';
+      ctx.beginPath();
+      ctx.arc(bf.location.x * w, bf.location.y * h, 10, 0, 2*Math.PI);
+      ctx.fill();
+    }
+  };
 
   // ===============================================================================================
 
@@ -259,7 +259,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
     if (feature.feature == 'vertex') {
       if (!vertexInArray(feature.location, grid.occ_vertices)) {
         if (vertexInArray(feature.location, grid.stagedVertices)) {
-          grid.stagedVertices = findAndRemoveVertex(grid.stagedVertices, feature.location);
+          // NOTE: even though we return the spliced array, we only call this -- we do not reset the array's value:
+          findAndRemoveVertex(grid.stagedVertices, feature.location);
         } else {
           grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
         }
@@ -275,15 +276,12 @@ export function Grid(w, h, numCellsW, numCellsH) {
       }
     }
 
-
     // And now... with edges and vertices.. update Staged cost:
     grid.staged_cost.iron = computeCosts(grid.stagedVertices, grid.stagedEdges).iron;
     grid.staged_cost.stone = computeCosts(grid.stagedVertices, grid.stagedEdges).stone;
 
     $('.projectedIron').html(grid.staged_cost.iron);
     $('.projectedStone').html(grid.staged_cost.stone);
-
-
 
     grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
   };

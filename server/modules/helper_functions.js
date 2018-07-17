@@ -170,5 +170,6 @@ module.exports = {
   getDifferenceVertices: getDifferenceVertices,
   getDifferenceEdges: getDifferenceEdges,
   computeCosts: computeCosts,
-  computeGains: computeGains
+  computeGains: computeGains,
+  BUILD_COSTS: BUILD_COSTS,
 };
