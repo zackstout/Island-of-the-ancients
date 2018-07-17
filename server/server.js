@@ -40,9 +40,6 @@ io.on('connection', socket => {
 
   socket.on('submitMove', data => {
     const game = _.find(games, {id: data.gameId});
-    // const new_verts = getDifferenceVertices(game.boardState.occupied_vertices, data.vertices);
-    // const new_edges = getDifferenceEdges(game.boardState.occupied_edges, data.edges);
-
     const new_verts = data.staged_vertices;
     const new_edges = data.staged_edges;
     console.log("NEW STUFF: ", new_verts, new_edges);
@@ -53,9 +50,6 @@ io.on('connection', socket => {
       verts_placed: new_verts,
       edges_placed: new_edges
     });
-
-    // game.boardState.occupied_vertices = data.vertices;
-    // game.boardState.occupied_edges = data.edges;
 
     // Trying the logic a different way, so that client only sends previous move, rather than array of *all* occupied features:
     game.boardState.occupied_vertices = data.staged_vertices.concat(game.boardState.occupied_vertices);

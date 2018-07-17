@@ -41,7 +41,7 @@ export function vertexInArray(v, arr) {
 
 // Note: this depends on convention (LRUD) being followed. Otherwise we may overlap.
 export function edgeInArray(e, arr) {
-  if (e.length < 1) return null;
+  if (e.length < 1) return false;
 
   for (let i=0; i < arr.length; i++) {
     if (arr[i][0].x == e[0].x && arr[i][0].y == e[0].y && arr[i][1].x == e[1].x && arr[i][1].y == e[1].y) return true;

@@ -243,36 +243,27 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
     // Now, let's draw a new piece there:
     const feature = grid.detectBoardFeature(mouse);
+    let drawThing = true;
 
-    if (vertexInArray(feature.location, grid.occ_vertices) || edgeInArray(feature.location, grid.occ_edges)) {
-      // We do nothing. It's occupado.
-    }
-    // ELSE, check whether clicked on thing belongs to STAGED. If so, remove it. If not, add it, IF THE COST IS NOT PROHIBITIVE.
-    else {
-
-
-      if (feature.feature == 'vertex') {
-        // It's a vertex:
+    if (feature.feature == 'vertex') {
+      if (!vertexInArray(feature.location, grid.occ_vertices)) {
         if (vertexInArray(feature.location, grid.stagedVertices)) {
           findAndRemoveVertex(grid.stagedVertices, feature.location);
         } else {
           grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
         }
-
-      } else {
-        // It's an edge:
+      }
+    } else if (feature.feature == 'edge') {
+      if (!edgeInArray(feature.location, grid.occ_edges)) {
         if (edgeInArray(feature.location, grid.stagedEdges)) {
           findAndRemoveEdge(grid.stagedEdges, feature.location);
         } else {
           grid.stagedEdges.push(feature.location);
         }
       }
-
-      grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
-
     }
-
-
+    
+    grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
 
   };
 

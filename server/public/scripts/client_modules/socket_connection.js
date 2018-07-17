@@ -2,8 +2,9 @@
 export const socket = window.io('http://localhost:5000');
 import { Grid } from './classes/Grid.js';
 
-const CANVAS_HEIGHT = 500;
-const CANVAS_WIDTH = 500;
+// These are magic numbers still:
+const CANVAS_HEIGHT = 400;
+const CANVAS_WIDTH = 400;
 
 // ===============================================================================================
 
