@@ -25,8 +25,6 @@ export function startClickListeners() {
       p1 = $(ev.currentTarget).data('from');
     }
 
-    // console.log(p1, p2, socket.id);
-
     socket.emit('startGame', {
       p1: p1,
       p2: p2
@@ -36,6 +34,8 @@ export function startClickListeners() {
   // ===============================================================================================
 
   $('body').on('click', '.subMove', ev => {
+    $('.projectedIron').html(0);
+    $('.projectedStone').html(0);
     console.log(grid);
     const gameId = grid.player.num == 1 ? grid.player.id + grid.enemy.id : grid.enemy.id + grid.player.id; // bad for security but whatever
     socket.emit('submitMove', {

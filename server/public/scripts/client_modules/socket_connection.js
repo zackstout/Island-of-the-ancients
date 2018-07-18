@@ -123,10 +123,6 @@ socket.on('submitMove', gameState => {
   $('.bankIron').html(`${gameState[player].bank.iron}`);
   $('.bankStone').html(`${gameState[player].bank.stone}`);
 
-  // this doesn't matter: is controlled by Grid.js:
-  // $('.projectedIron').html(`${projected_iron}`);
-  // $('.projectedStone').html(`${projected_stone}`);
-
   // this should prob also be controlled by Grid.js
   $('.harvestIron').html(`${gameState[player].tempBank.iron}`);
   $('.harvestStone').html(`${gameState[player].tempBank.stone}`);

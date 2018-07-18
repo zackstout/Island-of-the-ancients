@@ -8,10 +8,11 @@ import {
   getDistance,
   computeVertices,
   computeEdges,
-  findAndRemoveVertex,
-  findAndRemoveEdge,
   computeCosts,
-  canBuild,
+  handleVertexClick,
+  handleEdgeClick,
+  getOwner,
+  checkForNexus,
 } from '../../functions.js';
 
 import {
@@ -19,7 +20,7 @@ import {
   drawOccupiedEdges,
   drawEachCellsResourceGeneration,
   drawStagedEdges,
-  drawStagedVertices
+  drawStagedVertices,
 } from '../drawing_helpers.js';
 
 // ===============================================================================================
@@ -33,23 +34,19 @@ export function Grid(w, h, numCellsW, numCellsH) {
   this.cells = [];
   this.occ_vertices = [];
   this.occ_edges = [];
+  this.stagedVertices = [];
+  this.stagedEdges = [];
 
   this.player = '';
   this.enemy = '';
-
   this.staged_cost = {
     iron: 0,
     stone: 0
   };
-
-  this.stagedVertices = [];
-  this.stagedEdges = [];
-
   this.current_bank = {
     iron: 0,
     stone: 0
   };
-
 
   // ===============================================================================================
 
@@ -166,7 +163,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
 
-  // NOTE: The following three functions are now more-or-less duplicated on the server:
+  // NOTE: The following two functions are now more-or-less duplicated on the server:
   // ===============================================================================================
 
   this.getEachCellsResourceValue = function(occupied_edges) {
@@ -184,16 +181,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
       cell.numOccEdges += checkForNexus(cell, this.enemy.nexus);
     });
   };
-
-  // Helper function for above method (getEachCellsResourceValue):
-  function checkForNexus(cell, nex) {
-    const verts = computeVertices(cell);
-    for (let i=0; i < verts.length; i++) {
-      const vtx = verts[i];
-      if (vtx.x == nex.x && vtx.y == nex.y) return 1;
-    }
-    return 0;
-  }
 
   // ===============================================================================================
 
@@ -220,15 +207,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
       }
 
       // Determine the owner:
-      if (cell.numPlay1 > cell.numPlay2) {
-        cell.owner = 'P1';
-      } else if (cell.numPlay2 > cell.numPlay1) {
-        cell.owner = 'P2';
-      } else if (cell.numPlay1 == 0 && cell.numPlay2 == 0) {
-        cell.owner = null;
-      } else {
-        cell.owner = 'Neutral';
-      }
+      cell.owner = getOwner(cell.numPlay1, cell.numPlay2);
     });
   };
 
@@ -241,8 +220,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
     // console.log(grid.detectBoardFeature(mouse));
     grid.drawBoardFeature(grid.detectBoardFeature(mouse));
   };
-
-
 
   // ===============================================================================================
 
@@ -257,32 +234,13 @@ export function Grid(w, h, numCellsW, numCellsH) {
     const feature = grid.detectBoardFeature(mouse);
     console.log(feature);
 
-    // Hmmm....where do we get the player's current bank value?
-
     // The UI logic for handling clicks -- if clicking on a staged element, remove it; otherwise, add it:
-    // On the server, we will all stagedVertices and stagedEdges to the boardState.
+    // On the server, we will add stagedVertices and stagedEdges to the boardState.
     if (feature.feature == 'vertex') {
-      if (!vertexInArray(feature.location, grid.occ_vertices)) {
-        if (vertexInArray(feature.location, grid.stagedVertices)) {
-          // NOTE: even though we return the spliced array, we only call this -- we do not reset the array's value:
-          findAndRemoveVertex(grid.stagedVertices, feature.location);
-        } else {
-          if (canBuild(grid.current_bank, grid.staged_cost, 'sentry')) {
-            grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
-          }
-        }
-      }
+      handleVertexClick(grid, feature);
     }
     else if (feature.feature == 'edge') {
-      if (!edgeInArray(feature.location, grid.occ_edges)) {
-        if (edgeInArray(feature.location, grid.stagedEdges)) {
-          findAndRemoveEdge(grid.stagedEdges, feature.location);
-        } else {
-          if (canBuild(grid.current_bank, grid.staged_cost, 'connector')) {
-            grid.stagedEdges.push(feature.location);
-          }
-        }
-      }
+      handleEdgeClick(grid, feature);
     }
 
     // And now... with edges and vertices.. update Staged cost:
@@ -290,7 +248,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
     grid.staged_cost.stone = computeCosts(grid.stagedVertices, grid.stagedEdges).stone;
     $('.projectedIron').html(grid.staged_cost.iron);
     $('.projectedStone').html(grid.staged_cost.stone);
-
 
     grid.drawGrid(grid.occ_vertices, grid.occ_edges, grid.stagedVertices, grid.stagedEdges);
   };
@@ -308,18 +265,15 @@ export function Grid(w, h, numCellsW, numCellsH) {
       ctx.fillRect(cell.x * this.cell_width, cell.y * this.cell_height, this.cell_width, this.cell_height);
     });
 
-
     const all_edges = occupied_edges.concat(staged_edges);
     const all_verts = occupied_vertices.concat(staged_vertices);
 
     // Pretty ugly to pass around grid like this...
     drawStagedVertices(staged_vertices, this);
     drawStagedEdges(staged_edges, this);
-
     drawOccupiedEdges(occupied_edges, this);
     drawOccupiedVertices(occupied_vertices, this);
-
-    drawEachCellsResourceGeneration(this, all_edges, all_verts); // WE're overloading this function
+    drawEachCellsResourceGeneration(this, all_edges, all_verts);
   };
 
   // ===============================================================================================
@@ -330,6 +284,5 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
 }
-
 
 // ===============================================================================================

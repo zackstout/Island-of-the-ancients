@@ -27,9 +27,6 @@ export function drawOccupiedEdges(edges, grid) {
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 5;
     ctx.stroke();
-
-    // const neighbors = grid.getNeighborsOfEdge(edge);
-    // console.log(neighbors);
   });
 }
 
@@ -46,27 +43,24 @@ export function drawEachCellsResourceGeneration(grid, occ_edges=[], occ_verts=[]
     grid.getEachCellsOwner(grid.occ_vertices, grid.cells);
   }
 
-
-  // drawing on click is ALMOST working ... But now colors are broken...
-  // ODD.... the Projected Costs are not being cleared out anymore either ....
-
-
-  console.log(grid.cells);
-
   grid.cells.forEach(cell => {
     const text_x = cell.x * grid.cell_width + grid.cell_width/2;
     const text_y = cell.y * grid.cell_height + grid.cell_height/2;
-
-    if (cell.owner == 'P1') {
-      ctx.fillStyle = 'red';
-    } else if (cell.owner == 'P2') {
-      ctx.fillStyle = 'blue';
-    } else {
-      ctx.fillStyle = 'black';
-    }
-
+    ctx.fillStyle = getColor(cell.owner);
     ctx.fillText(cell.numOccEdges, text_x, text_y);
   });
+}
+
+// ===============================================================================================
+
+function getColor(player) {
+  if (player == 'P1') {
+    return 'red';
+  } else if (player == 'P2') {
+    return 'blue';
+  } else {
+    return 'black';
+  }
 }
 
 // ===============================================================================================

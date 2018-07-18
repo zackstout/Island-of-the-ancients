@@ -57,7 +57,6 @@ function computeGains(verts, edges, cells, player) {
     }
   }
 
-  console.log("RESULT OF GAINS: ", res);
   return res;
 }
 
@@ -172,4 +171,5 @@ module.exports = {
   computeCosts: computeCosts,
   computeGains: computeGains,
   BUILD_COSTS: BUILD_COSTS,
+  checkForNexus: checkForNexus,
 };

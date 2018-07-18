@@ -110,13 +110,64 @@ export function computeCosts(verts, edges=[]) {
 export function canBuild(start, projected, type) {
   const remaining_iron = start.iron - projected.iron;
   const remaining_stone = start.stone - projected.stone;
-  const bool = remaining_iron > BUILD_COSTS[type].iron && remaining_stone > BUILD_COSTS[type].stone;
+  const bool = remaining_iron >= BUILD_COSTS[type].iron && remaining_stone >= BUILD_COSTS[type].stone;
   console.log(bool);
   return bool;
 }
 
 // ===============================================================================================
 
+export function handleVertexClick(grid, feature) {
+  if (!vertexInArray(feature.location, grid.occ_vertices)) {
+    if (vertexInArray(feature.location, grid.stagedVertices)) {
+      // NOTE: even though we return the spliced array, we only call this -- we do not reset the array's value:
+      findAndRemoveVertex(grid.stagedVertices, feature.location);
+    } else {
+      if (canBuild(grid.current_bank, grid.staged_cost, 'sentry')) {
+        grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
+      }
+    }
+  }
+}
 
+// ===============================================================================================
+
+export function handleEdgeClick(grid, feature) {
+  if (!edgeInArray(feature.location, grid.occ_edges)) {
+    if (edgeInArray(feature.location, grid.stagedEdges)) {
+      findAndRemoveEdge(grid.stagedEdges, feature.location);
+    } else {
+      if (canBuild(grid.current_bank, grid.staged_cost, 'connector')) {
+        grid.stagedEdges.push(feature.location);
+      }
+    }
+  }
+}
+
+// ===============================================================================================
+
+export function getOwner(p1, p2) {
+  if (p1 > p2) return 'P1';
+  if (p2 > p1) return 'P2';
+  if (p1 == p2) return null;
+  else return 'Neutral';
+}
+
+// ===============================================================================================
+
+export function checkForNexus(cell, nex) {
+    const verts = computeVertices(cell);
+    for (let i=0; i < verts.length; i++) {
+      const vtx = verts[i];
+      if (vtx.x == nex.x && vtx.y == nex.y) return 1;
+    }
+    return 0;
+  }
+
+
+
+
+
+// ===============================================================================================
 
 // fun fun functions!
