@@ -126,6 +126,10 @@ export function handleVertexClick(grid, feature) {
         grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
       }
     }
+  } else {
+    // the clicked vertex is OCCUPADO: Check to build Citadel or shoot enemy:
+
+    
   }
 }
 

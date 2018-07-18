@@ -13,6 +13,12 @@ function Game(p1, p2, w, h) {
 
   this.mover = this.player1;
   this.historyOfMoves = [];
+  this.boardState = {
+    cells: [],
+    occupied_vertices: [],
+    occupied_edges: []
+  };
+
 
   this.generateNexuses = function() {
     const x1 = Math.floor(Math.random() * this.numCellsW);
@@ -38,12 +44,6 @@ function Game(p1, p2, w, h) {
         this.boardState.cells.push(cell);
       }
     }
-  };
-
-  this.boardState = {
-    cells: [],
-    occupied_vertices: [],
-    occupied_edges: []
   };
 
   this.generateNexuses();

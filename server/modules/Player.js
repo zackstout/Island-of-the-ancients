@@ -11,6 +11,8 @@ function Player(id, resources_arr, num) {
     iron: 0,
     stone: 0,
   };
+  
+  this.ammo = 0;
 }
 
 module.exports = Player;

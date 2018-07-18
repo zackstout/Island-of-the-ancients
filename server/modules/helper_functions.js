@@ -129,6 +129,8 @@ function getEachCellsOwner(verts, cells) {
   });
 }
 
+// ===============================================================================================
+
 function getOwner(p1, p2) {
   let owner;
   if (p1 > p2) {
