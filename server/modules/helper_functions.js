@@ -141,49 +141,11 @@ function getEachCellsOwner(verts, cells) {
   });
 }
 
-// ===============================================================================================
 
-// Relies on arr1 being a subset of arr2:
-function getDifferenceVertices(sub_arr, arr) {
-  let res = [];
-  arr.forEach(v1 => {
-    let contained = false;
-    sub_arr.forEach(v2 => {
-      if (v1.x == v2.x && v1.y == v2.y) {
-        contained = true;
-      }
-    });
-    if (!contained) {
-      res.push(v1);
-    }
-  });
-  return res;
-}
-
-// ===============================================================================================
-
-// Relies on arr1 being a subset of arr2:
-function getDifferenceEdges(sub_arr, arr) {
-  let res = [];
-  arr.forEach(e1 => {
-    let contained = false;
-    sub_arr.forEach(e2 => {
-      if (e1[0].x == e2[0].x && e1[0].y == e2[0].y && e1[1].x == e2[1].x && e1[1].y == e2[1].y) {
-        contained = true;
-      }
-    });
-    if (!contained) {
-      res.push(e1);
-    }
-  });
-  return res;
-}
 
 // ===============================================================================================
 
 module.exports = {
-  getDifferenceVertices: getDifferenceVertices,
-  getDifferenceEdges: getDifferenceEdges,
   computeCosts: computeCosts,
   computeGains: computeGains,
   BUILD_COSTS: BUILD_COSTS,

@@ -8,8 +8,6 @@ const _ = require('lodash');
 const helpers = require('./modules/helper_functions.js');
 const computeCosts = helpers.computeCosts;
 const computeGains = helpers.computeGains;
-const getDifferenceVertices = helpers.getDifferenceVertices;
-const getDifferenceEdges = helpers.getDifferenceEdges;
 const updateBank = helpers.updateBank;
 
 let allUsers = [];
