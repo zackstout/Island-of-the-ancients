@@ -31,14 +31,13 @@ function computeCosts(verts, edges) {
   res.stone += verts.reduce((sum, v) => sum + BUILD_COSTS.sentry.stone, 0);
   res.stone += edges.reduce((sum, e) => sum + BUILD_COSTS.connector.stone, 0);
 
-  // console.log("RESULT of REDUCING is...", res);
   return res;
 }
 
 // ===============================================================================================
 
+// For each cell, get number of surrounding edges. Then get its owner.
 function computeGains(verts, edges, cells, player) {
-  // For each cell, get number of surrounding edges. Then get its owner.
   let res = {
     iron: 0,
     stone: 0
@@ -48,11 +47,8 @@ function computeGains(verts, edges, cells, player) {
   let cell_owners = getEachCellsOwner(verts, cells);
 
   for (let i=0; i < cells.length; i++) {
-    // Yeah, could be written as one long condition, but feels ugly:
-    if (player.num == 1 && cell_owners[i] == 'P1') {
-      res[cells[i].resource] += resources_in_cells[i];
-    }
-    if (player.num == 2 && cell_owners[i] == 'P2') {
+    if (player.num == 1 && cell_owners[i] == 'P1' ||
+        player.num == 2 && cell_owners[i] == 'P2') {
       res[cells[i].resource] += resources_in_cells[i];
     }
   }
@@ -62,16 +58,19 @@ function computeGains(verts, edges, cells, player) {
 
 // ===============================================================================================
 
+// Update player's and enemy's bank based on previous move and current board state:
 function updateBank(socket, game, new_verts, new_edges) {
   const player = socket.id == game.player1.id ? 'player1' : 'player2';
   const enemy = socket.id == game.player2.id ? 'player1' : 'player2';
+
   game[player].bank.iron -= computeCosts(new_verts, new_edges).iron;
   game[player].bank.stone -= computeCosts(new_verts, new_edges).stone;
+
   res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game[enemy]);
   game[enemy].bank.iron += res.iron;
   game[enemy].bank.stone += res.stone;
 
-  // For lastHarvest on client side:
+  // For Last Harvest on client side:
   game[enemy].tempBank.iron = res.iron;
   game[enemy].tempBank.stone = res.stone;
 }
@@ -108,7 +107,6 @@ function getEachCellsOwner(verts, cells) {
   return cells.map(cell => {
     let p1 = 0;
     let p2 = 0;
-    let owner;
     const vertices = computeVertices(cell);
 
     for (let i=0; i < vertices.length; i++) {
@@ -126,22 +124,24 @@ function getEachCellsOwner(verts, cells) {
       }
     }
 
-    // Determine the owner:
-    if (p1 > p2) {
-      owner = 'P1';
-    } else if (p2 > p1) {
-      owner = 'P2';
-    } else if (p1 == 0 && p2 == 0) {
-      owner = null;
-    } else {
-      owner = 'Neutral';
-    }
-
+    const owner = getOwner(p1, p2);
     return owner;
   });
 }
 
-
+function getOwner(p1, p2) {
+  let owner;
+  if (p1 > p2) {
+    owner = 'P1';
+  } else if (p2 > p1) {
+    owner = 'P2';
+  } else if (p1 == 0 && p2 == 0) {
+    owner = null;
+  } else {
+    owner = 'Neutral';
+  }
+  return owner;
+}
 
 // ===============================================================================================
 

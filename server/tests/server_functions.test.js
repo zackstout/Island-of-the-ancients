@@ -4,7 +4,6 @@ var helper_helpers = require('../modules/helper_helpers.js');
 
 var assert = require('assert');
 
-
 describe('computeCosts', function() {
   it('should return an object with sum of costs', function() {
     // Must use deepEqual because objects with same property values are not identical:
