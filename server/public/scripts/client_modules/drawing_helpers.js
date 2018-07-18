@@ -1,10 +1,21 @@
 
 // ===============================================================================================
 
+// GOING TO CHANGE: Check whether it's a nexus, an upgraded nexus, a staged nexus, or an enemy about to be shot:
+
 // Each vertex has x, y, and occupant:
 export function drawOccupiedVertices(verts, grid) {
   verts.forEach(vertex => {
     ctx.fillStyle = vertex.occupant === 'P1' ? 'red' : 'blue';
+
+    if (vertex.stagedToShoot) ctx.fillStyle = 'yellow';
+    if (vertex.x == grid.player.nexus.x &&
+        vertex.y == grid.player.nexus.y &&
+        grid.player.nexus.stagedForUpgrade) ctx.fillStyle = 'purple';
+    if (vertex.x == grid.player.nexus.x &&
+        vertex.y == grid.player.nexus.y &&
+        grid.player.nexus.upgraded) ctx.fillStyle = 'pink';
+        
     ctx.beginPath();
     ctx.arc(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10, 0, 2*Math.PI);
     ctx.fill();

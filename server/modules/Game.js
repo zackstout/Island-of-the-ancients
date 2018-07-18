@@ -19,22 +19,26 @@ function Game(p1, p2, w, h) {
     occupied_edges: []
   };
 
+  // ===============================================================================================
 
   this.generateNexuses = function() {
     const x1 = Math.floor(Math.random() * this.numCellsW);
     const y1 = Math.floor(Math.random() * this.numCellsH);
-    const x2 = Math.floor(Math.random() * this.numCellsW);
+    let x2 = Math.floor(Math.random() * this.numCellsW);
     const y2 = Math.floor(Math.random() * this.numCellsH);
-    while (this.x2 == this.x1) {
-      this.x2 = Math.floor(Math.random() * this.numCellsW);
+    // !!! How did we get identically-located nexuses?? Because we had 'this' needlessly:
+    while (x2 == x1) {
+      x2 = Math.floor(Math.random() * this.numCellsW);
     }
-    this.player1.nexus = {x: x1, y: y1};
-    this.player2.nexus = {x: x2, y: y2};
+    this.player1.nexus = {x: x1, y: y1, stagedForUpgrade: false, upgraded: false};
+    this.player2.nexus = {x: x2, y: y2, stagedForUpgrade: false, upgraded: false};
     this.boardState.occupied_vertices = [
-      {x: x1, y: y1, occupant: 'P1'},
-      {x: x2, y: y2, occupant: 'P2'}
+      {x: x1, y: y1, occupant: 'P1', nexus: true},
+      {x: x2, y: y2, occupant: 'P2', nexus: true}
     ];
   };
+
+  // ===============================================================================================
 
   this.generateCells = function() {
     for (let i=0; i < this.numCellsW; i++) {
@@ -45,6 +49,8 @@ function Game(p1, p2, w, h) {
       }
     }
   };
+
+  // ===============================================================================================
 
   this.generateNexuses();
   this.generateCells();

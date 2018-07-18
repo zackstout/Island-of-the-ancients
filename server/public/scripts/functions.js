@@ -7,6 +7,14 @@ const BUILD_COSTS = {
   connector: {
     iron: 3,
     stone: 4
+  },
+  upgraded_nexus: {
+    iron: 5,
+    stone: 5
+  },
+  ammo: {
+    iron: 3,
+    stone: 1
   }
 };
 
@@ -110,30 +118,104 @@ export function canBuild(start, projected, type) {
   const remaining_iron = start.iron - projected.iron;
   const remaining_stone = start.stone - projected.stone;
   const bool = remaining_iron >= BUILD_COSTS[type].iron && remaining_stone >= BUILD_COSTS[type].stone;
-  console.log(bool);
+  // console.log(bool);
   return bool;
 }
 
 // ===============================================================================================
 
 export function handleVertexClick(grid, feature) {
+
   if (!vertexInArray(feature.location, grid.occ_vertices)) {
+    // Vertex is unoccupied, or occupied by one of our staged vertices:
     if (vertexInArray(feature.location, grid.stagedVertices)) {
-      // NOTE: even though we return the spliced array, we only call this -- we do not reset the array's value:
       findAndRemoveVertex(grid.stagedVertices, feature.location);
     } else {
       if (canBuild(grid.current_bank, grid.staged_cost, 'sentry')) {
         grid.stagedVertices.push({x: feature.location.x, y: feature.location.y, occupant: "P" + grid.player.num});
       }
     }
-  } else {
-    // the clicked vertex is OCCUPADO: Check to build Citadel or shoot enemy:
 
-    
+  } else {
+    // The clicked vertex is OCCUPADO: Check to build Citadel or shoot enemy:
+    console.log(grid);
+    if (feature.location.x == grid.player.nexus.x &&
+        feature.location.y == grid.player.nexus.y &&
+        canBuild(grid.current_bank, grid.staged_cost, 'upgraded_nexus')) {
+      handleNexusClick(grid);
+    } else {
+      handleEnemyClick(grid, feature);
+    }
   }
 }
 
 // ===============================================================================================
+
+export function handleEnemyClick(grid, feature) {
+  const occ = getOccupant(feature.location, grid.occ_vertices).occupant; // 'P1' or 'P2'
+  const isEnemy = occ.includes(grid.enemy.num);
+
+  if (isEnemy) {
+    if (occ.stagedToShoot && grid.armory.ammo > 0) {
+      fireUpon(occ, grid);
+    }
+    occ.stagedToShoot = true;
+  }
+}
+
+// ===============================================================================================
+
+export function handleNexusClick(grid) {
+  if (grid.player.nexus.stagedForUpgrade) {
+    upgradeNexus(grid);
+  }
+  // Will draw a different color:
+  grid.player.nexus.stagedForUpgrade = true;
+}
+
+// ===============================================================================================
+
+export function fireUpon(occ, grid) {
+  grid.armory.ammo --;
+  findAndRemoveVertex(grid.occ_vertices, occ);
+}
+
+// ===============================================================================================
+
+export function buildAmmo(grid) {
+  grid.armory.ammo ++;
+
+  grid.staged_cost.iron += BUILD_COSTS.ammo.iron;
+  grid.staged_cost.stone += BUILD_COSTS.ammo.stone;
+}
+
+// ===============================================================================================
+
+export function upgradeNexus(grid) {
+  grid.player.nexus.stagedForUpgrade = false;
+  grid.player.nexus.upgraded = true;
+
+  grid.staged_cost.iron += BUILD_COSTS.upgraded_nexus.iron;
+  grid.staged_cost.stone += BUILD_COSTS.upgraded_nexus.stone;
+  // NOTE: there should be a way to undo this, like click again to unstage.
+}
+
+// ===============================================================================================
+
+// Relies on fact that loc is in verts:
+export function getOccupant(loc, verts) {
+  for (let i=0; i<verts.length; i++) {
+    if (loc.x == verts[i].x && loc.y == verts[i].y) return verts[i];
+  }
+}
+
+
+
+
+
+// ===============================================================================================
+
+// Maybe only allow them to build the edge if it's connected to a power source??
 
 export function handleEdgeClick(grid, feature) {
   if (!edgeInArray(feature.location, grid.occ_edges)) {
@@ -148,6 +230,10 @@ export function handleEdgeClick(grid, feature) {
 }
 
 // ===============================================================================================
+
+
+
+
 
 export function getOwner(p1, p2) {
   if (p1 > p2) return 'P1';
@@ -167,6 +253,7 @@ export function checkForNexus(cell, nex) {
     return 0;
   }
 
+  // ===============================================================================================
 
 
 

@@ -1,13 +1,31 @@
 
 import { socket } from './socket_connection.js';
+import { canBuild, buildAmmo } from '../functions.js';
 
 export function startClickListeners() {
+
+  $('.weapon').hide();
+
+
   // Send invite:
   $('body').on('click', '.sub', ev => {
     socket.emit('invite', {
       to: $(ev.currentTarget).data('to'),
       from: $(ev.currentTarget).data('from')
     });
+  });
+  // ===============================================================================================
+
+  // Build ammo:
+  $('body').on('click', '.weapon', ev => {
+
+    if (canBuild(grid.current_bank, grid.staged_cost, 'ammo')) {
+      buildAmmo(grid);
+    }
+    // socket.emit('invite', {
+    //   to: $(ev.currentTarget).data('to'),
+    //   from: $(ev.currentTarget).data('from')
+    // });
   });
 
   // ===============================================================================================

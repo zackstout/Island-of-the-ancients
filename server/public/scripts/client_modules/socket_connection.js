@@ -67,7 +67,7 @@ socket.on('startGame', function(game) {
 
     grid.current_bank.iron = game.player1.bank.iron;
     grid.current_bank.stone = game.player1.bank.stone;
-    
+
     // Nice -- only listen on active player's clicks:
     if (grid.player == game.player2) {
       $('#island').off('click');
@@ -126,6 +126,11 @@ socket.on('submitMove', gameState => {
   // this should prob also be controlled by Grid.js
   $('.harvestIron').html(`${gameState[player].tempBank.iron}`);
   $('.harvestStone').html(`${gameState[player].tempBank.stone}`);
+
+
+  if (grid.player.nexus.upgraded) {
+    $('.weapon').show();
+  }
 });
 
 // ===============================================================================================
