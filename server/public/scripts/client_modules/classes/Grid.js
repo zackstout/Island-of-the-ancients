@@ -216,7 +216,6 @@ export function Grid(w, h, numCellsW, numCellsH) {
   this.handleMouseMove = function(e) {
     const mouse = {x: e.offsetX, y: e.offsetY};
     const grid = e.data.grid;
-
     // console.log(grid.detectBoardFeature(mouse));
     grid.drawBoardFeature(grid.detectBoardFeature(mouse));
   };

@@ -31,7 +31,6 @@ socket.on('ids', function(ids) {
 
 // Receive invite:
 socket.on('msg', function(inv) {
-  // console.log(inv);
   $('#log').append(inv + ' would like to play a game with you!');
   var play = '<button class="play" data-from="' + inv + '" data-to="' + socket.id + '">Play</button>';
   $('#log').append(play);
@@ -58,16 +57,17 @@ socket.on('startGame', function(game) {
 
     console.log(game, grid);
     window.grid = grid;
+
     // Draw the grid:
     grid.drawGrid(occ_vertices, occ_edges);
     // Add event listeners:
     $('#island').on('click', {grid: grid}, grid.handleClick);
-
-    grid.current_bank.iron = game.player1.bank.iron;
-    grid.current_bank.stone = game.player1.bank.stone;
     // Why so buggy??
     // $('#island').on('mouseover', {grid: grid}, grid.handleMouseMove);
 
+    grid.current_bank.iron = game.player1.bank.iron;
+    grid.current_bank.stone = game.player1.bank.stone;
+    
     // Nice -- only listen on active player's clicks:
     if (grid.player == game.player2) {
       $('#island').off('click');

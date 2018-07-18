@@ -23,6 +23,12 @@ Main idea: strategy 1v1 game in which players compete for resources on an island
 - Don't add any economy logic on the client side, even just for updating DOM. just ping server and wait for computed result.
 - NOTE: server-side re-implementation of `_.difference` won't be relevant anymore. We're just going to submit the current move, which is stagedVertices + stagedEdges, to the server. That makes more sense.
 
+- Could have a Projected Harvest field in the DOM table.
+
+- Add ammo functionality: a button to build it, once you've upgraded to a Citadel. When you click your own sentry, it turns yellow, and then clicking again makes it a citadel.
+- Similarly for ammo: when you click an enemy sentry, it turns yellow (IF you have an adjacent sentry to shoot at it), and then clicking confirms the shot, decrementing your ammo supply and removing that enemy sentry.
+
+
 ## Rules:
 - Game start: each play has randomly chosen power source.
 - To start, power supply generates resources from adjacent fields/cells.

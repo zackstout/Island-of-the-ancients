@@ -62,6 +62,22 @@ function computeGains(verts, edges, cells, player) {
 
 // ===============================================================================================
 
+function updateBank(socket, game, new_verts, new_edges) {
+  const player = socket.id == game.player1.id ? 'player1' : 'player2';
+  const enemy = socket.id == game.player2.id ? 'player1' : 'player2';
+  game[player].bank.iron -= computeCosts(new_verts, new_edges).iron;
+  game[player].bank.stone -= computeCosts(new_verts, new_edges).stone;
+  res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game[enemy]);
+  game[enemy].bank.iron += res.iron;
+  game[enemy].bank.stone += res.stone;
+
+  // For lastHarvest on client side:
+  game[enemy].tempBank.iron = res.iron;
+  game[enemy].tempBank.stone = res.stone;
+}
+
+// ===============================================================================================
+
 function getEachCellsResourceValue(occupied_edges, cells, player) {
   return cells.map(cell => {
     let res=0;
@@ -172,4 +188,5 @@ module.exports = {
   computeGains: computeGains,
   BUILD_COSTS: BUILD_COSTS,
   checkForNexus: checkForNexus,
+  updateBank: updateBank,
 };

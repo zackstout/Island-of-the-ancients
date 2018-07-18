@@ -10,6 +10,7 @@ const computeCosts = helpers.computeCosts;
 const computeGains = helpers.computeGains;
 const getDifferenceVertices = helpers.getDifferenceVertices;
 const getDifferenceEdges = helpers.getDifferenceEdges;
+const updateBank = helpers.updateBank;
 
 let allUsers = [];
 let games = [];
@@ -68,32 +69,7 @@ io.on('connection', socket => {
       stone: 0,
     };
 
-    if (socket.id == game.player1.id) {
-      // Owner of grid is P1:
-      game.player1.bank.iron -= computeCosts(new_verts, new_edges).iron;
-      game.player1.bank.stone -= computeCosts(new_verts, new_edges).stone;
-
-      res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game.player2);
-      game.player2.bank.iron += res.iron;
-      game.player2.bank.stone += res.stone;
-
-      // For lastHarvest on client side:
-      game.player2.tempBank.iron = res.iron;
-      game.player2.tempBank.stone = res.stone;
-
-    } else {
-      // Owner of grid is P2:
-      game.player2.bank.iron -= computeCosts(new_verts, new_edges).iron;
-      game.player2.bank.stone -= computeCosts(new_verts, new_edges).stone;
-
-      res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game.player1);
-      game.player1.bank.iron += res.iron;
-      game.player1.bank.stone += res.stone;
-
-      // For lastHarvest on client side:
-      game.player1.tempBank.iron = res.iron;
-      game.player1.tempBank.stone = res.stone;
-    }
+    updateBank(socket, game, new_verts, new_edges);
 
     // Ugly way of determining player's enemy:
     let enemyId;

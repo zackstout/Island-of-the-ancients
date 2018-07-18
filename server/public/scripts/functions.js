@@ -71,7 +71,7 @@ export function findAndRemoveVertex(verts, vtx) {
     }
   }
   // NOTE: splice mutates the input array, so there's no need to return. Should refactor:
-  return verts.splice(ind, 1);
+  verts.splice(ind, 1);
 }
 
 // ===============================================================================================
@@ -87,8 +87,7 @@ export function findAndRemoveEdge(edges, edge) {
       ind = i;
     }
   }
-  // NOTE: splice mutates the input array, so there's no need to return. Should refactor:
-  return edges.splice(ind, 1);
+  edges.splice(ind, 1);
 }
 
 // ===============================================================================================
