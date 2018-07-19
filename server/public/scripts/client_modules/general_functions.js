@@ -187,6 +187,7 @@ export function findAndRemoveEdge(edges, edge) {
 
       grid.staged_cost.iron += BUILD_COSTS.ammo.iron;
       grid.staged_cost.stone += BUILD_COSTS.ammo.stone;
+      // WHEN IS THE DOM UPDATED?
     }
 
     // ===============================================================================================

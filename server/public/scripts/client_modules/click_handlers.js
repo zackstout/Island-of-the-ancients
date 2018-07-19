@@ -17,15 +17,15 @@ export function startClickListeners() {
   // ===============================================================================================
 
   // Build ammo:
-  $('body').on('click', '.weapon', ev => {
+  $('body').on('click', '.buildAmmo', ev => {
 
+    // This looks wrong -- we don't know about grid here, do we?
     if (canBuild(grid.current_bank, grid.staged_cost, 'ammo')) {
       buildAmmo(grid);
+      stagedAmmo ++;
     }
-    // socket.emit('invite', {
-    //   to: $(ev.currentTarget).data('to'),
-    //   from: $(ev.currentTarget).data('from')
-    // });
+
+    // I don't think we need to emit to server here....Just keep track of how many clicks since last move, and attach that to submitMove emission.
   });
 
   // ===============================================================================================
@@ -60,7 +60,9 @@ export function startClickListeners() {
       staged_edges: grid.stagedEdges,
       staged_vertices: grid.stagedVertices,
       gameId: gameId
+      // ALSO EMIT AMMO BUILT, AMMO FIRED, VERTS DESTROYED, CITADELS BUILT.
     });
+    stagedAmmo = 0;
   });
 
   // ===============================================================================================

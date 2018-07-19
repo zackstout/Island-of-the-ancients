@@ -6,6 +6,7 @@ Main idea: strategy 1v1 game in which players compete for resources on an island
 - jQuery
 - Express
 - Socket.io
+- Mocha
 
 ## Animation:
 ![](https://media.giphy.com/media/3JUkOKOYNuczp7DsKk/giphy.gif)

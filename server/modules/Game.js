@@ -22,10 +22,11 @@ function Game(p1, p2, w, h) {
   // ===============================================================================================
 
   this.generateNexuses = function() {
-    const x1 = Math.floor(Math.random() * this.numCellsW);
-    const y1 = Math.floor(Math.random() * this.numCellsH);
-    let x2 = Math.floor(Math.random() * this.numCellsW);
-    const y2 = Math.floor(Math.random() * this.numCellsH);
+    // Disallow nexuses on edge of map:
+    const x1 = Math.floor(Math.random() * (this.numCellsW - 2)) + 1;
+    const y1 = Math.floor(Math.random() * (this.numCellsH - 2)) + 1;
+    let x2 = Math.floor(Math.random() * (this.numCellsW - 2)) + 1;
+    const y2 = Math.floor(Math.random() * (this.numCellsH - 2)) + 1;
     // !!! How did we get identically-located nexuses?? Because we had 'this' needlessly:
     while (x2 == x1) {
       x2 = Math.floor(Math.random() * this.numCellsW);

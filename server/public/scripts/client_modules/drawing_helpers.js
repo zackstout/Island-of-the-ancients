@@ -1,21 +1,24 @@
 
 // ===============================================================================================
 
-// GOING TO CHANGE: Check whether it's a nexus, an upgraded nexus, a staged nexus, or an enemy about to be shot:
+// Now sensitive to BOTH player's nexuses:
+function isNexus(vtx, grid) {
+  return (vtx.x == grid.player.nexus.x && vtx.y == grid.player.nexus.y) || (vtx.x == grid.enemy.nexus.x && vtx.y == grid.enemy.nexus.y);
+}
+
+// ===============================================================================================
 
 // Each vertex has x, y, and occupant:
 export function drawOccupiedVertices(verts, grid) {
   verts.forEach(vertex => {
     ctx.fillStyle = vertex.occupant === 'P1' ? 'red' : 'blue';
 
-    // Check if nexus:
-    if (vertex.x == grid.player.nexus.x &&
-        vertex.y == grid.player.nexus.y) {
-          if (grid.player.nexus.stagedForUpgrade) ctx.fillStyle = 'purple';
-          if (grid.player.nexus.upgraded) ctx.fillStyle = 'pink';
-          ctx.lineWidth = 1; 
-          drawPentagon(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10);
-        }
+    if (isNexus(vertex, grid)) {
+      if (grid.player.nexus.stagedForUpgrade) ctx.fillStyle = 'purple';
+      if (grid.player.nexus.upgraded) ctx.fillStyle = 'pink';
+      ctx.lineWidth = 1;
+      drawPentagon(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10);
+    }
     else {
       if (vertex.stagedToShoot) ctx.fillStyle = 'yellow';
       ctx.beginPath();
@@ -95,12 +98,7 @@ export function drawStagedVertices(verts, grid) {
 // ===============================================================================================
 
 function drawPentagon(x, y, r) {
-  // let canv = document.getElementById('canvas');
-  // let ctx = canv.getContext('2d');
-  // ctx.fillStyle = 'red';
-  // ctx.fillRect(0,0,300,300);
-
-  let angle = Math.PI * 2 / 5;
+  const angle = Math.PI * 2 / 5;
   ctx.beginPath();
   ctx.moveTo(x + Math.cos(angle * 0     - Math.PI/2) * r, y + Math.sin(angle * 0     - Math.PI/2) * r);
 
@@ -109,7 +107,6 @@ function drawPentagon(x, y, r) {
     ctx.stroke();
   }
   ctx.closePath();
-  // ctx.fillStyle = 'green';
   ctx.fill();
 }
 

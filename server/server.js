@@ -48,7 +48,12 @@ io.on('connection', socket => {
       move_number: game.moveNumber,
       mover: socket.id,
       verts_placed: new_verts,
-      edges_placed: new_edges
+      edges_placed: new_edges,
+
+      // NEW STUFF:
+      verts_removed: verts_removed,
+      ammo_built: ammo_built,
+      nexus_upgrade: nexus_upgrade
     });
 
     // Trying the logic a different way, so that client only sends previous move, rather than array of *all* occupied features:
