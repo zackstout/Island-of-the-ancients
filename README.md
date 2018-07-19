@@ -23,23 +23,14 @@ Main idea: strategy 1v1 game in which players compete for resources on an island
 - NOTE: we shouldn't need any of the "tally up" logic on the client. Just send array of cells....with that data? Hmm, maybe not. It's weird because it  needs to be on the server, to calculate the economy stuff.
 - Don't add any economy logic on the client side, even just for updating DOM. just ping server and wait for computed result.
 - NOTE: server-side re-implementation of `_.difference` won't be relevant anymore. We're just going to submit the current move, which is stagedVertices + stagedEdges, to the server. That makes more sense.
-
 - Could have a Projected Harvest field in the DOM table.
-
 - Add ammo functionality: a button to build it, once you've upgraded to a Citadel. When you click your own sentry, it turns yellow, and then clicking again makes it a citadel.
 - Similarly for ammo: when you click an enemy sentry, it turns yellow (IF you have an adjacent sentry to shoot at it), and then clicking confirms the shot, decrementing your ammo supply and removing that enemy sentry.
-
 - We could even run some machine learning to suss out the ideal strategy given a set of rules!
-
 - NOTE: edges function should return 2 or 3 if in corner or edge, respectively !!!
-
 - md syntax: does just adding new lines between line elements alter the styling of the whole list?
-
 - user should be able to see enemy's bank and armory
-
 - for now just exporting all functions, for testing, but architecture would have more clarity if we only exported functions that were used elsewhere. We really need to rethink architecture of functions modules, now that we have so many functions. Who needs what?
-
-
 
 ## Rules:
 - Game start: each play has randomly chosen power source.
