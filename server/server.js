@@ -52,8 +52,8 @@ io.on('connection', socket => {
     });
 
     // Trying the logic a different way, so that client only sends previous move, rather than array of *all* occupied features:
-    game.boardState.occupied_vertices = data.staged_vertices.concat(game.boardState.occupied_vertices);
-    game.boardState.occupied_edges = data.staged_edges.concat(game.boardState.occupied_edges);
+    game.boardState.occupied_vertices = [...data.staged_vertices, ...game.boardState.occupied_vertices];
+    game.boardState.occupied_edges = [...data.staged_edges, ...game.boardState.occupied_edges];
     game.moveNumber ++;
 
     // Swap mover:
@@ -61,7 +61,6 @@ io.on('connection', socket => {
     else game.mover = game.player1;
 
     // Deduct COSTS for proper player and add RESOURCES for next player before the turn is passed back to them:
-    // Surely a cleaner way to write with variable property:
     let res = {
       iron: 0,
       stone: 0,

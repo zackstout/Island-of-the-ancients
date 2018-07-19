@@ -13,7 +13,7 @@ import {
   handleEdgeClick,
   getOwner,
   checkForNexus,
-} from '../../functions.js';
+} from '../general_functions.js';
 
 import {
   drawOccupiedVertices,
@@ -39,6 +39,8 @@ export function Grid(w, h, numCellsW, numCellsH) {
 
   this.player = '';
   this.enemy = '';
+  this.armory = 0;
+  
   this.staged_cost = {
     iron: 0,
     stone: 0
@@ -67,7 +69,7 @@ export function Grid(w, h, numCellsW, numCellsH) {
   };
 
   // ===============================================================================================
-  //
+
   this.drawBoardFeature = bf => {
     if (bf.feature != 'cell') {
     }

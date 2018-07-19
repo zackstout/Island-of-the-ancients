@@ -1,5 +1,5 @@
 
-import { edgeInArray } from '../functions.js';
+import { edgeInArray } from './general_functions.js';
 
 const endpoints = [{x: 1, y: 1}, {x: 0, y: 3}];
 const connectors = [[{x: 1, y: 1}, {x: 1, y: 2}], [{x: 1, y: 2}, {x: 1, y: 3}], [{x: 1, y: 3}, {x: 0, y: 3}], [{x: 1, y: 0}, {x: 1, y: 1}], [{x: 0, y: 0}, {x: 1, y: 0}], [{x: 1, y: 1}, {x: 2, y: 1}]];
@@ -36,7 +36,7 @@ export function getOtherPoint(point, edge) {
 // ===============================================================================================
 
 // I see the problem: this is to find a CELL's edges, not the edges adjacent to a VERTEX -- THAT'S why there are always four of them!
-export function computeEdges(vtx) {
+export function computeEdgesOfVertex(vtx) {
   // Just leave the negatives for now:
   return [
     [{x: vtx.x - 1, y: vtx.y    }, {x: vtx.x    , y: vtx.y    }],
@@ -52,8 +52,8 @@ export function areConnected(v1, v2, occ_edges, path=[], checked=[]) {
   occ_edges = occ_edges.map(e => getStandardEdge(e));
 
   // Exit condition:
-  const edges1 = computeEdges(v1);
-  const edges2 = computeEdges(v2);
+  const edges1 = computeEdgesOfVertex(v1);
+  const edges2 = computeEdgesOfVertex(v2);
   for (let i=0; i < edges1.length; i++) {
     for (let j=0; j < edges2.length; j++) {
       const e = edges1[i];
@@ -95,7 +95,7 @@ export function areConnected(v1, v2, occ_edges, path=[], checked=[]) {
 // ===============================================================================================
 
 export function checkForImportantEdges(vtx, occ_edges, checked) {
-  return computeEdges(vtx).filter(e => edgeInArray(e, occ_edges)).filter(e => !edgeInArray(e, checked));
+  return computeEdgesOfVertex(vtx).filter(e => edgeInArray(e, occ_edges)).filter(e => !edgeInArray(e, checked));
 }
 
 // ===============================================================================================

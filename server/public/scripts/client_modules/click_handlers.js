@@ -1,6 +1,6 @@
 
 import { socket } from './socket_connection.js';
-import { canBuild, buildAmmo } from '../functions.js';
+import { canBuild, buildAmmo } from './general_functions.js';
 
 export function startClickListeners() {
 

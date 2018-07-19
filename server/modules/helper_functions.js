@@ -14,12 +14,24 @@ const BUILD_COSTS = {
   connector: {
     iron: 3,
     stone: 4
+  },
+  upgraded_nexus: {
+    iron: 5,
+    stone: 5
+  },
+  ammo: {
+    iron: 3,
+    stone: 1
   }
 };
 
 // ===============================================================================================
 
-// Helper function for submitMove:
+// NOTE: going to need to change this to accomodate building ammo and upgrading nexus:
+
+// HMMM also going to need to account for upgraded nexus and ammo on server side....
+
+
 function computeCosts(verts, edges) {
   let res = {
     iron: 0,
@@ -65,6 +77,7 @@ function updateBank(socket, game, new_verts, new_edges) {
 
   game[player].bank.iron -= computeCosts(new_verts, new_edges).iron;
   game[player].bank.stone -= computeCosts(new_verts, new_edges).stone;
+  // ALSO NEED TO ACCOUNT FOR UPGRADED NEXUSES AND AMMO PRODUCTION/AMOUNTS.
 
   res = computeGains(game.boardState.occupied_vertices, game.boardState.occupied_edges, game.boardState.cells, game[enemy]);
   game[enemy].bank.iron += res.iron;

@@ -1,7 +1,7 @@
 
 export const socket = window.io('http://localhost:5000');
 import { Grid } from './classes/Grid.js';
-import { computeCosts } from '../functions.js';
+import { computeCosts } from './general_functions.js';
 
 // These are magic numbers still:
 const CANVAS_HEIGHT = 400;

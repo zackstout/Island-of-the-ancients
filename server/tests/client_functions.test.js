@@ -1,5 +1,5 @@
 
-import { getDistance } from '../public/scripts/functions.js';
+import { getDistance } from '../public/scripts/client_modules/general_functions.js';
 
 var assert = require('assert');
 

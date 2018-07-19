@@ -8,17 +8,20 @@ export function drawOccupiedVertices(verts, grid) {
   verts.forEach(vertex => {
     ctx.fillStyle = vertex.occupant === 'P1' ? 'red' : 'blue';
 
-    if (vertex.stagedToShoot) ctx.fillStyle = 'yellow';
+    // Check if nexus:
     if (vertex.x == grid.player.nexus.x &&
-        vertex.y == grid.player.nexus.y &&
-        grid.player.nexus.stagedForUpgrade) ctx.fillStyle = 'purple';
-    if (vertex.x == grid.player.nexus.x &&
-        vertex.y == grid.player.nexus.y &&
-        grid.player.nexus.upgraded) ctx.fillStyle = 'pink';
-        
-    ctx.beginPath();
-    ctx.arc(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10, 0, 2*Math.PI);
-    ctx.fill();
+        vertex.y == grid.player.nexus.y) {
+          if (grid.player.nexus.stagedForUpgrade) ctx.fillStyle = 'purple';
+          if (grid.player.nexus.upgraded) ctx.fillStyle = 'pink';
+          ctx.lineWidth = 1; 
+          drawPentagon(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10);
+        }
+    else {
+      if (vertex.stagedToShoot) ctx.fillStyle = 'yellow';
+      ctx.beginPath();
+      ctx.arc(vertex.x * grid.cell_width, vertex.y * grid.cell_height, 10, 0, 2*Math.PI);
+      ctx.fill();
+    }
   });
 }
 
@@ -87,6 +90,27 @@ export function drawStagedVertices(verts, grid) {
       ctx.fill();
     });
   }
+}
+
+// ===============================================================================================
+
+function drawPentagon(x, y, r) {
+  // let canv = document.getElementById('canvas');
+  // let ctx = canv.getContext('2d');
+  // ctx.fillStyle = 'red';
+  // ctx.fillRect(0,0,300,300);
+
+  let angle = Math.PI * 2 / 5;
+  ctx.beginPath();
+  ctx.moveTo(x + Math.cos(angle * 0     - Math.PI/2) * r, y + Math.sin(angle * 0     - Math.PI/2) * r);
+
+  for (let i=0; i < 5; i ++) {
+    ctx.lineTo(x + Math.cos(angle * (i+1) - Math.PI/2) * r, y + Math.sin(angle * (i+1) - Math.PI/2) * r);
+    ctx.stroke();
+  }
+  ctx.closePath();
+  // ctx.fillStyle = 'green';
+  ctx.fill();
 }
 
 // ===============================================================================================
